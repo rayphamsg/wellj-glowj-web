@@ -1,7 +1,7 @@
 # Site Architecture
 
 ## Stack
-Next.js 16 (App Router, pinned exactly), React 19, TypeScript (strict), Tailwind CSS 4. No database, CMS, auth, ecommerce engine or analytics. Dependency versions match the IronJ site so patterns carry over.
+Next.js 16 (App Router, pinned exactly), React 19, TypeScript (strict), Tailwind CSS 4. No database, CMS, auth, ecommerce engine or analytics.
 
 ## Structure
 ```
@@ -20,7 +20,7 @@ Layering: routes compose sections; `ui/` primitives know no copy; sections get c
 ## Bilingual routing
 - `/vi` and `/en` via `[locale]`; other values 404 (`dynamicParams = false`). Statically generated.
 - `/` → `/vi` with a **temporary (307)** redirect in `next.config.ts` (default-locale policy not settled).
-- `www.drinkglowj.com` → `https://drinkglowj.com` permanent redirect (also configure on the Vercel domain).
+- `www.drinkglowj.com` → `https://drinkglowj.com` permanent redirect (configure the www → apex redirect at the hosting/DNS layer as well).
 - No i18n library. `Dictionary` type means a missing key fails `typecheck`; a test checks vi/en key parity.
 - Per locale: `<html lang>`, title/description, Open Graph (`vi_VN`/`en_US`), canonical `https://drinkglowj.com/{locale}`, hreflang `vi`, `en`, `x-default` → `/vi`.
 
@@ -37,7 +37,7 @@ Indexing is **off** (`src/config/seo.ts`): `noindex, nofollow`, robots `Disallow
 
 **Sheet columns** (row 1 of the `Leads` tab, exact order; the adapter refuses to write otherwise): `phone_normalized`, `phone_raw`, `locale`, `source`, `campaign`, `consent_at`, `consent_version`, `first_seen_at`, `last_seen_at`, `signup_count`, `status`. Format A and B as Plain text. Defaults: `source` = `drinkglowj.com`, `campaign` = `coming-soon` (the stage), `status` = `new`. Times ISO 8601 UTC.
 
-**Secrets:** none connected. Setup later (Vercel env vars, see `.env.example`): enable Sheets API, create a service account, share a spreadsheet with it as Editor, set the three variables. Use a separate test spreadsheet for local and Preview.
+**Secrets:** none connected. Setup later (environment variables in the chosen hosting provider, see `.env.example`): enable Sheets API, create a service account, share a spreadsheet with it as Editor, set the three variables. Use a separate test spreadsheet for local and non-production deployments.
 
 **Consent versions**
 
@@ -45,7 +45,7 @@ Indexing is **off** (`src/config/seo.ts`): `noindex, nofollow`, robots `Disallow
 |---|---|
 | `draft-0` | PLACEHOLDER, not reviewed |
 
-**Abuse protection:** honeypot plus a recommended Vercel Firewall rate limit (POST to page routes, ~10/min/IP, respond 429). No CAPTCHA yet.
+**Abuse protection:** honeypot plus a recommended rate limit at the hosting/CDN layer (POST to page routes, ~10/min/IP, respond 429). No CAPTCHA yet.
 
 ## Deployment and CI
-Vercel auto-detects Next.js; `main` deploys to production, other branches preview. CI (`.github/workflows/ci.yml`) runs lint, typecheck, test and build on PRs and pushes to `main`.
+**Hosting is not decided yet.** Nothing in the repo assumes a provider; the www → apex redirect, rate limiting and environment variables are configured at the hosting/DNS layer once chosen. CI (`.github/workflows/ci.yml`) runs lint, typecheck, test and build on PRs and pushes to `main`.

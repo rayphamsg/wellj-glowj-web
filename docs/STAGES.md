@@ -12,7 +12,7 @@ Set in `src/config/stage.ts`:
 Defined in `src/config/features.ts`. Each flag works independently:
 | Flag | Controls |
 |---|---|
-| `waitlist` | Lead capture (email / Zalo / Messenger / Haravan) |
+| `waitlist` | Lead capture (email / Zalo / Messenger / commerce platform) |
 | `preorder` | Pre-order entry points |
 | `campaignProgress` | Crowdfunding progress display |
 | `buyNow` | Direct purchase entry points |
@@ -25,6 +25,6 @@ Use in code: `if (isEnabled("waitlist")) { ... }`. Components for a disabled fea
 1. Confirm the narrative and copy for the new stage exist in `src/content/`.
 2. Change `stage` in `src/config/stage.ts`.
 3. Adjust `overrides` if the defaults are not what you want.
-4. Run lint, typecheck and build, then check the Vercel preview before merging.
+4. Run lint, typecheck and build, then check a non-production deployment before merging.
 
-Flags only control what shows; they do not wire up providers. Preorder and buy-now need a real checkout destination (e.g. Haravan or a crowdfunding platform), which is a separate approved task.
+Flags only control what shows; they do not wire up providers. Preorder and buy-now need a real checkout destination (a commerce or crowdfunding platform, not yet chosen), which is a separate approved task.

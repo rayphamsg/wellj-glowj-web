@@ -22,4 +22,4 @@ The GlowJ brand strategy, design system and Coming Soon copy are under Marketing
 3. Add a new consent version in `consent.ts` (never edit `draft-0`) and record its wording in `SITE_ARCHITECTURE.md`.
 4. Build the real home page; add favicon and OG image.
 5. Set `indexable = true` in `src/config/seo.ts`.
-6. Set production secrets in Vercel (Production only; Preview uses a test spreadsheet).
+6. Set production secrets in the hosting provider (production only; non-production environments use a test spreadsheet).

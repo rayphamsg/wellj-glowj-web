@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       // Canonical domain is https://drinkglowj.com. Safety net; the primary
-      // www redirect is also configured on the Vercel domain.
+      // www -> apex redirect is configured at the hosting/DNS layer.
       {
         source: "/:path*",
         has: [{ type: "host", value: "www.drinkglowj.com" }],

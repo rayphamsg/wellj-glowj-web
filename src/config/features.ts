@@ -5,7 +5,7 @@ import { stage, type Stage } from "./stage";
  * regardless of stage. See docs/STAGES.md.
  */
 export type FeatureFlags = {
-  /** Lead capture (email / Zalo / Messenger / Haravan). */
+  /** Lead capture (email / Zalo / Messenger / commerce platform). */
   waitlist: boolean;
   /** Pre-order entry points. */
   preorder: boolean;
