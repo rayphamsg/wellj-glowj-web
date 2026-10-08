@@ -314,11 +314,11 @@ html[data-signup="success"] .halo-ring {
 .headline-accent {
   font-family: var(--font-accent);
   font-style: italic;
-  font-weight: 600;
-  font-size: 1.08em; /* optical match: the serif italic sits smaller than the sans at equal size */
+  font-weight: 500;
+  font-size: 1.05em; /* optical match with the sans, kept just under it so the accent stays refined */
   letter-spacing: -0.005em;
   padding-right: 0.04em; /* italic overhang */
-  margin-left: 0.04em; /* optical gap after the upright word */
+  margin-left: 0.07em; /* a little more air after the upright word */
 }
 
 @media (min-width: 768px) {

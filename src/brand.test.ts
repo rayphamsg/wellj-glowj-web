@@ -21,7 +21,7 @@ function code(file: string): string {
 const sources = walk(join(root, "src")).filter((f) => /\.(ts|tsx|css)$/.test(f) && !f.endsWith(".test.ts"));
 
 /**
- * The single sanctioned serif/italic (docs/DESIGN_SYSTEM.md section 8): Fraunces SemiBold Italic for
+ * The single sanctioned serif/italic (docs/DESIGN_SYSTEM.md section 8): Fraunces Medium Italic for
  * the headline's coral accent word. Removed before the guardrails scan; pinned by its own test below.
  */
 function withoutSanctionedAccent(file: string, text: string): string {
@@ -91,7 +91,7 @@ describe('"The Fill Line" guardrails (docs/DESIGN_SYSTEM.md sections 16-17)', ()
   it("confines the serif italic to the headline accent word", () => {
     const users = sources.filter((f) => /Fraunces|headline-accent|font-accent/.test(code(f))).map((f) => f.replace(root, ""));
     assert.deepEqual(users.sort(), ["src/app/[locale]/layout.tsx", "src/app/globals.css", "src/components/fill/Headline.tsx"]);
-    assert.match(read("src/app/[locale]/layout.tsx"), /Fraunces\(\{[\s\S]*?weight: \["600"\][\s\S]*?style: \["italic"\]/);
+    assert.match(read("src/app/[locale]/layout.tsx"), /Fraunces\(\{[\s\S]*?weight: \["500"\][\s\S]*?style: \["italic"\]/);
     assert.match(read("src/components/fill/Headline.tsx"), /word === accent \? <span className="headline-accent text-coral">/);
   });
 

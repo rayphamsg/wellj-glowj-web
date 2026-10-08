@@ -17,11 +17,11 @@ const body = Be_Vietnam_Pro({
   display: "swap",
 });
 
-// The ONE exception: Fraunces SemiBold Italic, used only for the headline's coral accent word
+// The ONE exception: Fraunces Medium Italic, used only for the headline's coral accent word
 // ("tươi." / "Glow."). Beauty x hydration comes from the contrast with the bold sans.
 const accent = Fraunces({
   subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["600"],
+  weight: ["500"],
   style: ["italic"],
   variable: "--font-accent-face",
   display: "swap",

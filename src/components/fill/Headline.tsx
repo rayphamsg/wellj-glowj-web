@@ -20,7 +20,7 @@ function breakAfter(lines: string[]): Set<number> {
 }
 
 /**
- * The headline: Be Vietnam Pro Bold, with the accent word in Fraunces SemiBold Italic, coral.
+ * The headline: Be Vietnam Pro Bold, with the accent word in Fraunces Medium Italic, coral.
  * Set on manual line breaks: two lines from the desktop breakpoint,
  * the narrow arrangement below it. One heading in the DOM; the breaks are <br>s
  * shown per breakpoint, so assistive technology reads a single sentence.

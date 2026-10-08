@@ -131,7 +131,7 @@ How this prevents the "pink soft drink" read: air always sits on top and holds t
 - **Primary:** **Be Vietnam Pro** (Vietnamese-first; correct stacked diacritics ể ổ ờ ạ; weights 100–900; Google Fonts). One family; contrast from weight and scale only.
 - **Backup:** Plus Jakarta Sans ExtraBold (already integrated; Vietnamese subset; slightly rounder/less dense).
 - **Dropped:** Montserrat display; Black (900) weight.
-- **Headline personality: beauty × hydration.** The sentence is Be Vietnam Pro **Bold (700)**, upright and modern; the coral accent word ("tươi." / "Glow.") is **Fraunces SemiBold Italic (600)**, an elegant high-contrast serif with full Vietnamese support (horns and stacked marks verified). The beauty feeling comes from the contrast between the bold modern sans and the serif accent. This is the **only** serif/italic on the site (approved founder exception, pinned by a test). Accent set at 1.08em for optical size match, +0.04em optical gap before it, +0.04em right padding for the italic overhang. Not sport, spa, skincare luxury, handwritten or wedding/editorial: no script, no other serif, no italic elsewhere, no outline/3D type.
+- **Headline personality: beauty × hydration.** The sentence is Be Vietnam Pro **Bold (700)**, upright and modern; the coral accent word ("tươi." / "Glow.") is **Fraunces Medium Italic (500)**, an elegant high-contrast serif with full Vietnamese support (horns and stacked marks verified). The beauty feeling comes from the contrast between the bold modern sans and the serif accent. This is the **only** serif/italic on the site (approved founder exception, pinned by a test). Accent set at 1.05em (just under the optical match, so it stays refined rather than fashion-editorial), a 0.07em gap before it, +0.04em right padding for the italic overhang. Not sport, spa, skincare luxury, handwritten or wedding/editorial: no script, no other serif, no italic elsewhere, no outline/3D type.
 - **Headline scale:** mobile 390: 52–58px · tablet 820: 84–92px · desktop 1440: 124–132px · cap 144px; fluid between.
 - **Line-height:** VI **1.04** (stacked marks and below-dots must never collide; verify at max size) · EN **0.98**.
 - **Tracking:** VI **−0.02em** · EN **−0.03em** (sans); accent −0.005em.
@@ -254,7 +254,7 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 | Ink on air `#F7FAF9` | 18.0:1 | All air-zone text |
 | Ink on coral | **5.1:1** | All coral-zone text, including 13px consent (AA) |
 | Air on ink | 18.0:1 | CTA text, success bar |
-| Coral on air | 3.53:1 | **Only** the headline accent word (≥ 54px, Fraunces SemiBold Italic) |
+| Coral on air | 3.53:1 | **Only** the headline accent word (≥ 54px, Fraunces Medium Italic) |
 | Air on coral | 3.53:1 | **Never for text.** Meniscus line only |
 
 (With the fallback air `#FFFDFC`: ink 18.7:1, coral 3.66:1; same rules.)
