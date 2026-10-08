@@ -10,7 +10,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
       href={`/${target}`}
       hrefLang={target}
       lang={target}
-      className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface/70 px-4 text-sm font-medium text-ink transition duration-500 ease-flow hover:bg-liquid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong"
+      className="inline-flex min-h-11 items-center rounded-xl border border-line bg-surface/70 px-4 text-sm font-medium text-ink transition duration-500 ease-flow hover:bg-clear focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong"
     >
       {getDictionary(locale).header.languageSwitchLabel}
     </Link>

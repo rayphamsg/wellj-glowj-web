@@ -10,26 +10,24 @@
  */
 @theme {
   /* Surfaces and text */
-  --color-paper: #fffaf4; /* page base: the label cream */
+  --color-paper: #fffaf4; /* page base: cream */
   --color-surface: #fffdf9; /* raised surfaces */
   --color-ink: #35192b; /* deep plum: text, 14.7:1 on paper */
   --color-muted: #6e5163; /* secondary text, 6.5:1 on paper */
   --color-line: #e7ddd2; /* hairlines */
 
   /* Brand signal */
-  --color-brand: #f46a60; /* Glow Coral, exactly as on the label */
-  --color-brand-contrast: #35192b;
-  --color-brand-strong: #b63a27; /* coral for small text/focus on paper, 5.4:1 */
-  --color-glow-strong: #d9503c; /* large display use only (the J), 3.8:1 */
+  --color-brand: #ef4650; /* Glow Coral: the official logo coral */
+  --color-brand-contrast: #1d0b17; /* text on brand fills, 5.2:1 */
+  --color-brand-strong: #b62233; /* coral for small text/focus on paper, 6.2:1 */
+  --color-glow-strong: #d93a48; /* large display use only (headline accent), 4.4:1 */
 
   /* Soft luminous accents (decorative, never text) */
-  --color-glow: #f6a291;
-  --color-blush: #f9d3c8;
+  --color-glow: #f79590;
+  --color-blush: #fad2cf;
   --color-champagne: #f2ddb9;
   --color-plum: #4a2540; /* premium anchor: category label, dark accents */
-  --color-liquid: #fde8e6; /* the drink's own pale pink liquid (from the bottle), as light only; never text or brand fill */
-  --color-liquid-deep: #fbc9c8;
-  --color-wordmark: #121212; /* the label's black for the "glow" wordmark only */
+  --color-clear: #dcedf2; /* clear, cool water light: freshness only, never text or brand fill */
   --color-accent: var(--color-champagne);
 
   /* Type: editorial display + clean sans (families wired in the root layout) */
@@ -83,14 +81,25 @@ body {
   box-shadow: var(--shadow-soft);
 }
 
-/* A slow pass of light over the bottle's own silhouette (the mask is set inline). */
-.bottle-sheen {
+/*
+ * Light and water effects around the official droplet. The droplet image is
+ * never altered: effects are overlays clipped to its own silhouette (the mask
+ * is set inline via --droplet) plus a reflection and ripples beneath it.
+ */
+.droplet-fx {
+  -webkit-mask-image: var(--droplet);
+  mask-image: var(--droplet);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
-  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 0.5) 50%, transparent 62%);
-  background-size: 300% 100%;
-  background-position: 100% 0;
   pointer-events: none;
+}
+
+/* Reflection in clear water: flipped, fading out, rippled (filter defined in HeroVisual). */
+.droplet-reflection {
+  transform: scaleY(-1);
+  -webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 0.36), transparent 18%);
+  mask-image: linear-gradient(to top, rgb(0 0 0 / 0.36), transparent 18%);
+  filter: url(#glow-water) blur(0.6px);
 }
 
 /*
@@ -118,107 +127,60 @@ body {
       transform: translate3d(3%, -3%, 0) scale(1.06);
     }
   }
-  /* A bead forms at the base of the droplet, then drops to the surface. */
-  @keyframes glow-drip {
-    0% {
-      transform: translateY(0) scale(0.2);
-      opacity: 0;
-    }
-    18% {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-    }
-    36% {
-      transform: translateY(24px) scale(1);
-      opacity: 1;
-    }
-    40% {
-      transform: translateY(32px) scale(1);
-      opacity: 0;
-    }
-    100% {
-      transform: translateY(32px) scale(1);
-      opacity: 0;
-    }
-  }
-  /* Rings spread across the surface after impact. */
-  @keyframes glow-surface-ripple {
-    0%,
-    40% {
-      transform: scale(0.15);
-      opacity: 0;
-    }
-    46% {
-      opacity: 0.85;
-    }
-    78% {
-      transform: scale(1);
-      opacity: 0;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 0;
-    }
-  }
+  /* The droplet rests on the air above clear water. */
   @keyframes glow-float {
     0%,
     100% {
       transform: translateY(0);
     }
     50% {
-      transform: translateY(-5px);
+      transform: translateY(-9px);
     }
   }
-  /* Light travels along a line between nodes. */
-  @keyframes glow-pulse {
-    from {
-      stroke-dashoffset: 114;
-    }
-    to {
-      stroke-dashoffset: -14;
-    }
-  }
-  /* Nodes breathe softly. */
-  @keyframes glow-node {
+  @keyframes glow-float-reverse {
     0%,
     100% {
-      transform: scale(0.8);
-      opacity: 0;
+      transform: scaleY(-1) translateY(0);
     }
     50% {
-      transform: scale(1.5);
-      opacity: 0.45;
+      transform: scaleY(-1) translateY(-9px);
     }
   }
-  @keyframes glow-bottle-sheen {
+  /* Rings spread across the water beneath it, slowly. */
+  @keyframes glow-ripple {
+    0% {
+      transform: scale(0.35);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(1.25);
+      opacity: 0;
+    }
+  }
+  /* Refracted light passes through the liquid body. */
+  @keyframes glow-refract {
     0%,
-    30% {
+    25% {
       background-position: 100% 0;
     }
-    75%,
+    80%,
     100% {
       background-position: 0% 0;
     }
   }
-  /* A band of light passes through the halftone dots. */
-  @keyframes glow-shimmer {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(560px);
-    }
-  }
-  /* Refracted light drifting through the liquid. */
-  @keyframes glow-sheen {
+  /* Light pooling at the base drifts side to side. */
+  @keyframes glow-caustic {
     0%,
     100% {
-      opacity: 0.45;
-      transform: translateX(-8%);
+      transform: translateX(-6%);
+      opacity: 0.55;
     }
     50% {
-      opacity: 1;
-      transform: translateX(10%);
+      transform: translateX(6%);
+      opacity: 0.95;
     }
   }
 
@@ -229,40 +191,30 @@ body {
   .motion-drift {
     animation: glow-drift 24s ease-in-out infinite;
   }
-  .motion-drip {
-    transform-box: fill-box;
-    transform-origin: 50% 0;
-    animation: glow-drip 9s cubic-bezier(0.5, 0, 0.9, 0.6) infinite;
-  }
-  .motion-surface-ripple {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: glow-surface-ripple 9s var(--ease-flow) infinite;
-  }
   .motion-float {
     animation: glow-float 10s ease-in-out infinite;
   }
-  .motion-pulse {
-    stroke-dasharray: 14 100;
-    animation: glow-pulse 9s linear infinite;
+  .droplet-reflection {
+    animation: glow-float-reverse 10s ease-in-out infinite;
   }
-  .motion-node {
+  .motion-ripple {
     transform-box: fill-box;
     transform-origin: center;
-    animation: glow-node 6s ease-in-out infinite;
+    animation: glow-ripple 9s var(--ease-flow) infinite;
   }
-  .motion-shimmer {
-    animation: glow-shimmer 12s ease-in-out infinite;
+  .droplet-refract {
+    background-size: 300% 100%;
+    animation: glow-refract 11s ease-in-out infinite;
   }
-  .bottle-sheen {
-    animation: glow-bottle-sheen 10s ease-in-out infinite;
-  }
-  .motion-sheen {
-    animation: glow-sheen 11s ease-in-out infinite;
+  .droplet-caustic {
+    animation: glow-caustic 12s ease-in-out infinite;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .droplet-reflection {
+    filter: blur(0.6px);
+  }
   html {
     scroll-behavior: auto;
   }

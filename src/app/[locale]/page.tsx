@@ -25,14 +25,14 @@ function splitHeadline(headline: string, accent: string) {
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const { home, signup, bottleAlt } = getDictionary(locale);
+  const { home, signup } = getDictionary(locale);
   const headline = splitHeadline(home.headline, home.headlineAccent);
 
   return (
     <section>
       <Container className="grid items-center gap-6 pb-16 pt-2 lg:min-h-[calc(100dvh-8rem)] lg:grid-cols-12 lg:gap-10 lg:py-10">
-        <div className="motion-reveal order-1 mx-auto w-48 sm:w-60 lg:order-2 lg:col-span-5 lg:w-full lg:max-w-[25rem]" style={order(0)}>
-          <HeroVisual bottleAlt={bottleAlt} />
+        <div className="motion-reveal order-1 mx-auto w-36 sm:w-48 lg:order-2 lg:col-span-5 lg:w-full lg:max-w-[21rem]" style={order(0)}>
+          <HeroVisual />
         </div>
 
         <div className="order-2 lg:order-1 lg:col-span-7">

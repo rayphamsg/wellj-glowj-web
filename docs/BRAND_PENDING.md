@@ -7,9 +7,9 @@ The GlowJ direction is **approved for the Stage 1 Coming Soon design** (see [DES
 | Headline, support, category, field label, CTA (vi + en) | Approved | `src/content/{vi,en}/index.ts` |
 | Consent notice and success/error messages | **DRAFT microcopy, not approved** | `src/content/{vi,en}/index.ts` |
 | Consent version | `draft-0` (wording is the draft above) | `src/lib/lead-capture/consent.ts` |
-| Logo | Vectorised from the official label artwork (inline header arrangement). Replace with official vector files / confirm horizontal lockup | `src/components/brand/logo-paths.ts`, `Wordmark.tsx` |
-| Droplet | Rebuilt from measured label geometry (not an official vector). Replace with official file if supplied | `src/components/visual/GlowDroplet.tsx` |
-| Bottle | Approved bottle mockup (clear PET, pink/coral liquid), cut out from the supplied image; replace with approved product photography when available | `public/images/glowj-bottle.webp`, `HeroVisual.tsx` |
+| Logo | Official vector, unchanged (`brand-assets/official/glowj-logo-vector.pdf`) | `src/components/brand/GlowJLogo.tsx` |
+| Droplet | Official droplet (supplied raster; transparent margin trimmed, resized). Replace if a vector master exists | `public/images/glowj-droplet.webp` |
+| Bottle / packaging | Deliberately **not shown** in Stage 1. Authoritative for future product work | — |
 | Photography | None yet | — |
 | Favicon / OG image | Not provided | — |
 | Contact / social links | `null` | `src/content/site.ts` |
@@ -18,7 +18,7 @@ The GlowJ direction is **approved for the Stage 1 Coming Soon design** (see [DES
 
 ## Before go-live
 1. Approve final consent and microcopy wording; add a new consent version (never edit an existing one) and record it in `SITE_ARCHITECTURE.md`.
-2. Replace the wordmark with the approved logo; add favicon and OG image.
-3. Add approved product photography (the website shows no bottle yet).
+2. Add favicon and OG image (derive from the official assets).
+3. Decide when the bottle and product photography are revealed (a later stage).
 4. Set `indexable = true` in `src/config/seo.ts`.
 5. Set production secrets in the chosen hosting provider (production only; non-production uses a test spreadsheet).

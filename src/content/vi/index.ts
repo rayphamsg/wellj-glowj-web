@@ -25,7 +25,6 @@ export const vi: Dictionary = {
     },
     category: "GlowJ — Mix bù khoáng rạng ngời.",
   },
-  bottleAlt: "Chai GlowJ",
   signup: {
     label: "Số Zalo của bạn",
     placeholder: "Số Zalo của bạn",

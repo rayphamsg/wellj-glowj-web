@@ -8,9 +8,9 @@ import type { Locale } from "@/lib/i18n/locales";
 export function Header({ locale }: { locale: Locale }) {
   return (
     <header>
-      <Container className="flex h-16 items-center justify-between">
+      <Container className="flex h-[4.5rem] items-center justify-between">
         <Link href={`/${locale}`} className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-strong">
-          <Wordmark className="h-8 w-auto" />
+          <Wordmark className="h-12 w-auto" />
         </Link>
         <LanguageSwitcher locale={locale} />
       </Container>
