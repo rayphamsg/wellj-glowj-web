@@ -5,10 +5,22 @@ import type { SignupCopy } from "./signup-copy";
  * language fails `npm run typecheck`.
  */
 export type Dictionary = {
-  /** PENDING APPROVAL: all strings below are placeholders from the technical foundation. */
   meta: { title: string; description: string };
   header: { languageSwitchLabel: string };
-  home: { heading: string; body: string };
-  footer: { note: string };
+  home: {
+    /** Small caps line above the headline. */
+    eyebrow: string;
+    /** Full headline. */
+    headline: string;
+    /** The part of `headline` set in the italic accent. Must be a substring of it. */
+    headlineAccent: string;
+    support: {
+      /** Short moments, shown as one flowing line. */
+      moments: string[];
+      body: string;
+    };
+    /** Category line shown with the signup. */
+    category: string;
+  };
   signup: SignupCopy;
 };

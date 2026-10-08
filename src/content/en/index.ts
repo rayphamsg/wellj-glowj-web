@@ -1,30 +1,41 @@
 import type { Dictionary } from "../types";
 
 /**
- * PENDING MARKETING DIRECTOR APPROVAL.
- * Every string here is a neutral technical placeholder, not production copy.
- * English is written natively in the copy phase, not translated from Vietnamese.
+ * Stage 1 Coming Soon copy (English), written natively. Headline, support,
+ * category, field and CTA are approved. The consent notice and the
+ * success/error messages are DRAFT microcopy, not yet approved: replace them
+ * when the final wording is provided (and add a new consent version; see
+ * src/lib/lead-capture/consent.ts).
  */
 export const en: Dictionary = {
   meta: {
-    title: "GlowJ by WellJ", // PLACEHOLDER
-    description: "GlowJ by WellJ. [PENDING APPROVAL: content not approved]", // PLACEHOLDER
+    title: "GlowJ — Natural hydration for active women",
+    description: "Natural hydration for active women. Hydrate your glow. Coming soon.",
   },
   header: { languageSwitchLabel: "Tiếng Việt" },
   home: {
-    heading: "GlowJ by WellJ", // PLACEHOLDER
-    body: "[PENDING APPROVAL] Content awaiting approval.", // PLACEHOLDER
+    eyebrow: "COMING SOON",
+    headline: "Hydrate Your Glow.",
+    headlineAccent: "Glow",
+    support: {
+      moments: ["A busy day.", "A pickleball match.", "A workout.", "An afternoon in the heat."],
+      body: "Your body loses more water and minerals than you notice. GlowJ helps you replenish in a more natural way — so you can stay fresh and radiant.",
+    },
+    category: "Natural hydration for active women.",
   },
-  footer: { note: "[PENDING APPROVAL]" }, // PLACEHOLDER
   signup: {
-    label: "[PENDING] Phone number",
-    placeholder: "[PENDING] 09xx xxx xxx",
-    submitLabel: "[PENDING] Submit",
-    consentNotice: "[PENDING APPROVAL] Consent notice wording not approved.",
-    successMessage: "[PENDING] Received.",
+    label: "Your Zalo number",
+    placeholder: "Your Zalo number",
+    submitLabel: "Tell me when GlowJ launches",
+    // DRAFT, not approved.
+    consentNotice: "By submitting your Zalo number, you agree to be contacted by GlowJ about the launch.",
+    // DRAFT, not approved.
+    successMessage: "Thank you. GlowJ will message you when it launches.",
     errorMessages: {
-      invalid: "[PENDING] Invalid phone number.",
-      unavailable: "[PENDING] Unavailable right now. Please try again later.",
+      // DRAFT, not approved.
+      invalid: "That Zalo number doesn't look right. Please check it and try again.",
+      // DRAFT, not approved.
+      unavailable: "We couldn't send that just now. Please try again in a few minutes.",
     },
   },
 };

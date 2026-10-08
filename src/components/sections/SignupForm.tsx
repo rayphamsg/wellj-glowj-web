@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { Button } from "@/components/ui/Button";
+import { cx } from "@/lib/cx";
 import { submitLead } from "@/lib/lead-capture/actions";
 import type { SignupState } from "@/lib/lead-capture/process";
 import { CURRENT_CONSENT_VERSION } from "@/lib/lead-capture/consent";
@@ -32,7 +33,7 @@ const initial: SignupState = { status: "idle" };
 /**
  * Provider-agnostic signup. It only talks to `submitLead`; which provider
  * receives the lead is decided in src/lib/lead-capture/adapters.ts.
- * Styling is intentionally minimal until the design phase.
+ * Styled with GlowJ tokens; behaviour is unchanged.
  */
 export function SignupForm({
   channel = "zalo",
@@ -52,7 +53,7 @@ export function SignupForm({
   const noticeId = `consent-${placement}`;
 
   return (
-    <form action={action} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+    <form action={action} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       <input type="hidden" name="channel" value={channel} />
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="consentVersion" value={CURRENT_CONSENT_VERSION} />
@@ -70,15 +71,15 @@ export function SignupForm({
         required
         placeholder={placeholder}
         aria-describedby={noticeId}
-        className="min-h-11 flex-1 rounded-md border border-line px-3 text-base"
+        className="min-h-12 w-full flex-1 rounded-full border border-line bg-surface px-5 text-base text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong sm:w-auto sm:min-w-0"
       />
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending} className="w-full sm:w-auto">
         {submitLabel}
       </Button>
-      <p id={noticeId} className="text-sm text-muted sm:basis-full">
+      <p id={noticeId} className="text-xs leading-relaxed text-muted sm:basis-full">
         {consentNotice}
       </p>
-      <p role="status" aria-live="polite" className="text-sm sm:basis-full">
+      <p role="status" aria-live="polite" className={cx("text-sm font-medium empty:hidden sm:basis-full", state.status === "error" ? "text-brand-strong" : "text-ink")}>
         {state.status === "success" && successMessage}
         {state.status === "error" && (state.reason === "invalid" ? errorMessages.invalid : errorMessages.unavailable)}
       </p>

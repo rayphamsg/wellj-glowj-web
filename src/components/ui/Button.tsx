@@ -5,11 +5,11 @@ import { cx } from "@/lib/cx";
 type Variant = "primary" | "secondary";
 
 const base =
-  "inline-flex min-h-11 items-center justify-center rounded-md px-5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60";
+  "inline-flex min-h-12 items-center justify-center rounded-full px-6 text-base font-semibold transition duration-500 ease-flow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-brand text-brand-contrast hover:opacity-90",
-  secondary: "border border-line bg-paper text-ink hover:bg-line/40",
+  primary: "bg-brand text-brand-contrast shadow-glow hover:brightness-105",
+  secondary: "border border-line bg-surface text-ink hover:bg-blush/40",
 };
 
 type ButtonProps = ComponentPropsWithoutRef<"button"> & { variant?: Variant };

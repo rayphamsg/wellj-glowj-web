@@ -2,7 +2,7 @@
 
 Official GlowJ by WellJ website (`https://drinkglowj.com`) — pre-launch, crowdfunding and launch site.
 
-**Status:** Stage 1 (coming-soon), technical foundation only. Brand design and copy are pending approval; see `docs/BRAND_PENDING.md`.
+**Status:** Stage 1 (coming-soon) design implemented; indexing is off. Visual system: `docs/DESIGN_SYSTEM.md`. Open items: `docs/BRAND_PENDING.md`.
 
 ```
 npm ci

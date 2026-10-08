@@ -1,13 +1,29 @@
 import type { Metadata, Viewport } from "next";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { RefractionField } from "@/components/visual/RefractionField";
 import { indexable } from "@/config/seo";
 import { site } from "@/content/site";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { isLocale, LOCALES, OG_LOCALE } from "@/lib/i18n/locales";
 import { absoluteUrl, languageAlternates, localePath } from "@/lib/seo";
 import "../globals.css";
+
+// Editorial display serif for headlines; clean sans for body and UI. Both cover Vietnamese.
+const display = Fraunces({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  axes: ["opsz", "SOFT"],
+  style: ["normal", "italic"],
+  variable: "--font-display-face",
+  display: "swap",
+});
+const body = Plus_Jakarta_Sans({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  variable: "--font-body-face",
+  display: "swap",
+});
 
 type LayoutProps = { children: React.ReactNode; params: Promise<{ locale: string }> };
 
@@ -44,22 +60,21 @@ export async function generateMetadata({ params }: Pick<LayoutProps, "params">):
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#ffffff", // PENDING: brand colour
+  themeColor: "#fbf6ef", // paper (cream)
 };
 
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const dictionary = getDictionary(locale);
-
   return (
-    <html lang={locale}>
-      <body className="flex min-h-dvh flex-col">
+    <html lang={locale} className={`${display.variable} ${body.variable}`}>
+      <body className="relative isolate flex min-h-dvh flex-col overflow-x-clip">
+        <RefractionField />
         <Header locale={locale} />
         <main id="main" className="flex-1">
           {children}
         </main>
-        <Footer note={dictionary.footer.note} />
+        <Footer />
       </body>
     </html>
   );

@@ -1,23 +1,59 @@
 @import "tailwindcss";
 
 /*
- * NEUTRAL TECHNICAL PLACEHOLDERS ONLY. GlowJ brand tokens, palette and
- * typography are PENDING MARKETING DIRECTOR APPROVAL. These values exist so
- * the foundation renders legibly; they are not a design decision and must
- * not be treated as GlowJ's look. Components use these token names, never
- * raw colours.
+ * GlowJ visual system (Stage 1). Direction approved; see docs/DESIGN_SYSTEM.md.
+ * Components use these semantic token names, never raw colours.
+ *
+ * Palette logic: Cream / warm white = dominant base. Glow Coral = main brand
+ * signal. Deep Plum = premium anchor for type. Champagne + blush = soft
+ * luminous accents (hydration / glow signal). Avoid candy pink and neon.
  */
 @theme {
-  --color-ink: #111111;
-  --color-paper: #ffffff;
-  --color-muted: #6b7280;
-  --color-line: #e5e7eb;
-  --color-brand: #111111; /* PENDING: GlowJ primary */
-  --color-brand-contrast: #ffffff;
-  --color-accent: #6b7280; /* PENDING: GlowJ accent */
+  /* Surfaces and text */
+  --color-paper: #fbf6ef; /* page base: cream */
+  --color-surface: #fffdf9; /* raised surfaces: warm white */
+  --color-ink: #35192b; /* deep plum: text, 14.7:1 on paper */
+  --color-muted: #6e5163; /* secondary text, 6.5:1 on paper */
+  --color-line: #ebddd0; /* hairlines */
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* PENDING: brand font */
-  --font-display: var(--font-sans);
+  /* Brand signal */
+  --color-brand: #f27b68; /* Glow Coral: fills (ink text on it is 5.9:1) */
+  --color-brand-contrast: #35192b;
+  --color-brand-strong: #b63a27; /* coral for small text/focus on paper, 5.4:1 */
+  --color-glow-strong: #d9503c; /* large display use only (the J), 3.8:1 */
+
+  /* Soft luminous accents (decorative, never text) */
+  --color-glow: #f6a291;
+  --color-blush: #f9d3c8;
+  --color-champagne: #f2ddb9;
+  --color-plum: #4a2540; /* premium anchor for large dark areas */
+  --color-accent: var(--color-champagne);
+
+  /* Type: editorial display + clean sans (families wired in the root layout) */
+  --text-display: clamp(2.75rem, 1.6rem + 5.4vw, 5.75rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.02em;
+  --text-lead: clamp(1.125rem, 1rem + 0.7vw, 1.5rem);
+  --text-lead--line-height: 1.45;
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.28em;
+
+  /* Spacing + shape */
+  --spacing-section: clamp(4rem, 3rem + 6vw, 8rem);
+  --radius-card: 1.75rem;
+
+  /* Elevation: soft, warm, tinted; never grey drop shadows */
+  --shadow-soft: 0 1px 2px rgb(53 25 43 / 0.04), 0 18px 40px -22px rgb(53 25 43 / 0.28);
+  --shadow-glow: 0 28px 70px -28px rgb(242 123 104 / 0.55);
+
+  /* Motion: flow, light, ripple, diffusion. Slow and soft; never fast or kinetic. */
+  --ease-flow: cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+@theme inline {
+  --font-sans: var(--font-body-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-display-face), ui-serif, Georgia, "Times New Roman", serif;
 }
 
 html {
@@ -29,6 +65,101 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-blush);
+  color: var(--color-ink);
+}
+
+/* Frosted-glass surface for the signup card. */
+@utility surface-glass {
+  background: rgb(255 253 249 / 0.7);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgb(255 255 255 / 0.7);
+  box-shadow: var(--shadow-soft), var(--shadow-glow);
+}
+
+/*
+ * Motion principles (docs/DESIGN_SYSTEM.md): slow liquid drift, soft ripple,
+ * refracted light, slow reveal. Everything is wrapped in no-preference so
+ * reduced-motion visitors get the finished, static composition.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes glow-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+      filter: blur(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+  @keyframes glow-drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(3%, -4%, 0) scale(1.08);
+    }
+  }
+  @keyframes glow-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes glow-ripple {
+    0% {
+      transform: scale(0.45);
+      opacity: 0;
+    }
+    25% {
+      opacity: 0.55;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+  @keyframes glow-sheen {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: translateX(-6%);
+    }
+    50% {
+      opacity: 0.75;
+      transform: translateX(6%);
+    }
+  }
+
+  .motion-reveal {
+    animation: glow-reveal 1.1s var(--ease-flow) both;
+    animation-delay: calc(var(--reveal-order, 0) * 120ms + 80ms);
+  }
+  .motion-drift {
+    animation: glow-drift 22s ease-in-out infinite;
+  }
+  .motion-float {
+    animation: glow-float 9s ease-in-out infinite;
+  }
+  .motion-ripple {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: glow-ripple 9s var(--ease-flow) infinite;
+  }
+  .motion-sheen {
+    animation: glow-sheen 12s ease-in-out infinite;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

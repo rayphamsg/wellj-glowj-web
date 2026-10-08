@@ -8,7 +8,7 @@ Next.js 16 (App Router, pinned exactly), React 19, TypeScript (strict), Tailwind
 src/
   app/[locale]/        layout.tsx (html lang, metadata), page.tsx
   app/                 robots.ts, sitemap.ts, globals.css
-  components/ui|layout|sections/
+  components/ui|layout|sections|visual/
   config/              stage.ts, features.ts, seo.ts
   content/             site.ts (brand facts), types.ts (Dictionary), vi/, en/, signup-copy.ts
   lib/i18n/            locales, dictionary loader
@@ -43,7 +43,7 @@ Indexing is **off** (`src/config/seo.ts`): `noindex, nofollow`, robots `Disallow
 
 | Version | Wording shown |
 |---|---|
-| `draft-0` | PLACEHOLDER, not reviewed |
+| `draft-0` | DRAFT, not approved. vi: "Bằng việc gửi số Zalo, bạn đồng ý để GlowJ liên hệ với bạn về lần ra mắt." en: "By submitting your Zalo number, you agree to be contacted by GlowJ about the launch." |
 
 **Abuse protection:** honeypot plus a recommended rate limit at the hosting/CDN layer (POST to page routes, ~10/min/IP, respond 429). No CAPTCHA yet.
 

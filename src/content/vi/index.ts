@@ -1,30 +1,43 @@
 import type { Dictionary } from "../types";
 
 /**
- * PENDING MARKETING DIRECTOR APPROVAL.
- * Every string here is a neutral technical placeholder, not production copy.
- * Final Vietnamese copy replaces this file's values; keys stay the same.
+ * Stage 1 Coming Soon copy (Vietnamese). Headline, support, category, field and
+ * CTA are approved. The consent notice and the success/error messages are
+ * DRAFT microcopy, not yet approved: replace them when the final wording is
+ * provided (and add a new consent version; see src/lib/lead-capture/consent.ts).
+ *
+ * "Mix bù khoáng rạng ngời" is GlowJ's category phrase. It belongs to the
+ * Vietnamese experience only and is never rendered by the English locale.
  */
 export const vi: Dictionary = {
   meta: {
-    title: "GlowJ by WellJ", // PLACEHOLDER
-    description: "GlowJ by WellJ. [PENDING APPROVAL: nội dung chưa được duyệt]", // PLACEHOLDER
+    title: "GlowJ — Mix bù khoáng rạng ngời",
+    description: "Bù khoáng, cấp nước từ bên trong — cho vẻ ngoài tươi khỏe, rạng ngời mỗi ngày. Sắp ra mắt.",
   },
   header: { languageSwitchLabel: "English" },
   home: {
-    heading: "GlowJ by WellJ", // PLACEHOLDER
-    body: "[PENDING APPROVAL] Nội dung đang chờ duyệt.", // PLACEHOLDER
+    eyebrow: "SẮP RA MẮT",
+    headline: "Bù lại để luôn tươi.",
+    headlineAccent: "luôn tươi",
+    support: {
+      moments: ["Một ngày bận rộn.", "Một trận pickleball.", "Một buổi tập.", "Một chiều ngoài nắng."],
+      body: "Cơ thể mất nước và khoáng chất nhiều hơn bạn nghĩ. GlowJ giúp bạn bù lại theo một cách tự nhiên hơn — để luôn tươi khỏe, rạng ngời.",
+    },
+    category: "GlowJ — Mix bù khoáng rạng ngời.",
   },
-  footer: { note: "[PENDING APPROVAL]" }, // PLACEHOLDER
   signup: {
-    label: "[PENDING] Số điện thoại",
-    placeholder: "[PENDING] 09xx xxx xxx",
-    submitLabel: "[PENDING] Gửi",
-    consentNotice: "[PENDING APPROVAL] Nội dung thông báo đồng ý chưa được duyệt.",
-    successMessage: "[PENDING] Đã nhận.",
+    label: "Số Zalo của bạn",
+    placeholder: "Số Zalo của bạn",
+    submitLabel: "Nhắn tôi khi GlowJ ra mắt",
+    // DRAFT, not approved.
+    consentNotice: "Bằng việc gửi số Zalo, bạn đồng ý để GlowJ liên hệ với bạn về lần ra mắt.",
+    // DRAFT, not approved.
+    successMessage: "Cảm ơn bạn. GlowJ sẽ nhắn bạn khi ra mắt.",
     errorMessages: {
-      invalid: "[PENDING] Số điện thoại không hợp lệ.",
-      unavailable: "[PENDING] Hiện chưa thể gửi. Vui lòng thử lại sau.",
+      // DRAFT, not approved.
+      invalid: "Số Zalo chưa đúng. Bạn kiểm tra lại giúp mình nhé.",
+      // DRAFT, not approved.
+      unavailable: "Hiện chưa gửi được. Bạn thử lại sau ít phút nhé.",
     },
   },
 };
