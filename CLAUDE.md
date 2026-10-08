@@ -9,11 +9,12 @@ Official site for **GlowJ by WellJ** at `https://drinkglowj.com`. GlowJ is a **s
 - Work on a branch and never push to `main` directly. Do not open a PR unless asked.
 - Before finishing any change, run `npm run lint`, `npm run typecheck`, `npm test` and `npm run build`. Report real results.
 - Do NOT add a CMS, database, authentication, ecommerce engine, analytics or new dependencies without explicit approval.
-- Do not go beyond the approved direction in `docs/DESIGN_SYSTEM.md`: no new brand colours, fonts, claims, category wording or invented assets (never a fake final bottle). Use `AssetPlaceholder` / marked placeholders until approved material is provided. Copy marked DRAFT is not approved.
+- Do not go beyond the approved direction in `docs/DESIGN_SYSTEM.md`: no new brand colours, fonts, claims, category wording or invented assets (never a fake final bottle; the site shows no bottle until approved photography exists). Use `AssetPlaceholder` / marked placeholders until approved material is provided. Copy marked DRAFT is not approved.
 - Never copy anything from the IronJ repo into GlowJ except neutral technical code: no IronJ copy, colours, assets, J-device, motion language or category wording.
 - All visible copy lives in `src/content/{vi,en}/`, not in components. Both languages share the `Dictionary` type in `src/content/types.ts`.
 - Use semantic design tokens only (`src/app/globals.css`); never raw colours in components. Keep motion slow and reduced-motion safe.
 - "Mix bù khoáng rạng ngời" is GlowJ's Vietnamese-only category phrase; never render it in the English locale.
+- The logo (glow wordmark + coral J) and the droplet geometry come from the product label and are core brand assets: never redesign them or invent a different droplet. Source: `src/components/brand/logo-paths.ts`, `GlowDroplet.tsx`.
 - Server Components by default; `"use client"` only when interactivity requires it.
 - Stage and features: `src/config/stage.ts`, `src/config/features.ts`. Indexing: `src/config/seo.ts` (off until approved go-live).
 - Bilingual routes `/vi` and `/en` (`[locale]` segment); `/` redirects temporarily to `/vi`. No i18n library.

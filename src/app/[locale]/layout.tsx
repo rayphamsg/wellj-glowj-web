@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Montserrat, Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
@@ -11,12 +11,18 @@ import { isLocale, LOCALES, OG_LOCALE } from "@/lib/i18n/locales";
 import { absoluteUrl, languageAlternates, localePath } from "@/lib/seo";
 import "../globals.css";
 
-// Editorial display serif for headlines; clean sans for body and UI. Both cover Vietnamese.
-const display = Fraunces({
+// Heavy geometric sans for headlines (the voice of the label type); clean sans for body and UI;
+// serif italic only for the single headline accent. All cover Vietnamese.
+const display = Montserrat({
   subsets: ["latin", "latin-ext", "vietnamese"],
-  axes: ["opsz", "SOFT"],
-  style: ["normal", "italic"],
   variable: "--font-display-face",
+  display: "swap",
+});
+const accent = Fraunces({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  style: ["italic"],
+  axes: ["opsz"],
+  variable: "--font-accent-face",
   display: "swap",
 });
 const body = Plus_Jakarta_Sans({
@@ -60,14 +66,14 @@ export async function generateMetadata({ params }: Pick<LayoutProps, "params">):
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#fbf6ef", // paper (cream)
+  themeColor: "#fffaf4", // paper (label cream)
 };
 
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   return (
-    <html lang={locale} className={`${display.variable} ${body.variable}`}>
+    <html lang={locale} className={`${display.variable} ${accent.variable} ${body.variable}`}>
       <body className="relative isolate flex min-h-dvh flex-col overflow-x-clip">
         <RefractionField />
         <Header locale={locale} />

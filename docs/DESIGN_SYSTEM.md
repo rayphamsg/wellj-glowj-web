@@ -4,46 +4,54 @@ Approved direction for the Coming Soon phase. Tokens live in `src/app/globals.cs
 
 ## Brand frame
 - **Category:** GlowJ — Mix bù khoáng rạng ngời (Vietnamese only; English uses "Natural hydration for active women.").
-- **Positioning:** premium natural hydration for active women. Territory: hydration × mineral replenishment × beauty wellness. Progression: hydration → mineral replenishment → freshness → radiance → glow.
-- **Personality:** fresh · premium · feminine · active · modern · radiant. Feminine but not girly; beauty-wellness but not cosmetic; active but not hardcore sport.
-- **Never:** a beauty miracle drink, supplement-looking, pink soft drink, fruit juice, hardcore sports drink, or a recolour of another WellJ brand.
+- **Positioning:** premium natural hydration for active women. **Hydration first, glow second.** Glow comes from replenishment, freshness and natural hydration, not from a cosmetic or spa look. Territory: hydration × mineral replenishment × beauty wellness.
+- **Personality:** fresh · premium · feminine · active · modern · radiant.
+- **Never:** spa, skincare, cosmetics, beauty supplement, a pink soft drink, fruit juice, a hardcore sports drink, or a recolour of another WellJ brand.
+
+## Source of truth: the label
+The logo and droplet already exist on the product label and are **core brand assets that must not be redesigned**. The website extends them; it does not reinvent them.
+- **Wordmark and J:** `src/components/brand/logo-paths.ts` holds the "glow" wordmark and the coral J, **vectorised from the label artwork** (not redrawn). Replace with the official vector files when supplied. The label stacks "glow" over the J; `Wordmark` is a derived inline arrangement for the header (J at the wordmark's ascender height), to be confirmed against an official horizontal lockup if one exists.
+- **Droplet:** `GlowDroplet.tsx` rebuilds the label's geometry from measurements (label coordinates): a round bead (centre 177,475, r 142) whose top is cut by the J's underside with a cream gap; three coral nodes with white rings (two high, one low); the same 13 white edge lines; staggered halftone dots; peach-to-coral gradient. The lower hook of the J is drawn above it, as on the label.
+- **Colours from the label:** coral `#f46a60`, cream `#fffaf4`, black `#121212` (wordmark only).
 
 ## Colour (semantic tokens)
 | Token | Value | Use |
 |---|---|---|
-| `paper` | `#fbf6ef` | Dominant base (cream) |
-| `surface` | `#fffdf9` | Raised surfaces, inputs (warm white) |
-| `ink` | `#35192b` | Text (deep plum), 14.7:1 on paper |
-| `muted` | `#6e5163` | Secondary text, 6.5:1 |
+| `paper` | `#fffaf4` | Dominant base: the label cream |
+| `surface` | `#fffdf9` | Cards, inputs |
+| `ink` | `#35192b` | Text (deep plum) |
+| `muted` | `#6e5163` | Secondary text |
 | `line` | `#ebddd0` | Hairlines |
-| `brand` | `#f27b68` | Glow Coral fills; `brand-contrast` (plum) text on it is 5.9:1 |
-| `brand-strong` | `#b63a27` | Coral for small text / focus rings, 5.4:1 |
-| `glow-strong` | `#d9503c` | Large display use only (the J, headline accent), 3.8:1 |
-| `glow`, `blush`, `champagne` | soft tints | Decorative light only, never text |
-| `plum` | `#4a2540` | Premium anchor for large dark areas (reserved) |
+| `brand` | `#f46a60` | Glow Coral, exactly as on the label (fills, the J) |
+| `brand-strong` | `#b63a27` | Coral for small text / focus rings |
+| `glow-strong` | `#d9503c` | Large display use only (headline accent) |
+| `wordmark` | `#121212` | The "glow" wordmark only |
+| `plum` | `#4a2540` | Category label, dark anchor |
+| `liquid`, `liquid-deep` | pale lime-gold | The drink's own liquid colour (from the bottle), as light only; never text or brand fill |
+| `glow`, `blush`, `champagne` | soft tints | Decorative light only |
 
-Avoid candy pink, neon, black-heavy layouts, salon or fruit-juice looks.
+Avoid blush-wash backgrounds, candy pink, neon and black-heavy layouts.
 
 ## Typography
-- **Display:** Fraunces (editorial serif, with optical size and soft axes), light weight. Italic is reserved for the single coral headline accent ("luôn tươi" / "Glow"); nowhere else. Token: `font-display`, size `text-display`, support line `text-lead`.
-- **Body/UI:** Plus Jakarta Sans. Token: `font-sans`.
-- The category line is semibold sans and the lifestyle moments are regular sans, so the page reads contemporary and active rather than fashion-editorial.
-- Both load via `next/font/google` (self-hosted at build, no runtime request) and include Vietnamese.
-- No script beauty fonts, no condensed or aggressive sport faces.
+- **Display:** Montserrat (heavy geometric sans, the voice of the label's type), extra-bold, tight tracking. Token `font-display`.
+- **Accent:** Fraunces italic, used only for the single coral headline accent ("luôn tươi" / "Glow"). Token `font-accent`.
+- **Body/UI:** Plus Jakarta Sans. Token `font-sans`.
+- All load via `next/font/google` (self-hosted at build) and include Vietnamese. No script fonts, no condensed sport faces.
 
-## Spacing, surfaces, shape
-`py-section` is the vertical rhythm; `rounded-card` (1.75rem) for cards and `rounded-full` for inputs and buttons. `surface-glass` is the frosted-warm-white surface (blur + warm tinted glow shadow). Shadows are warm and tinted (`shadow-soft`, `shadow-glow`), never grey.
-
-## Brand device
-A droplet of liquid light, not a gemstone: `GlowDroplet`, over the soft diffusion field `RefractionField`. It is translucent with internal volume, slightly asymmetric and leaning, with soft blurred facets, refracted light bands that drift diagonally, an inner glow that shifts, thin flow lines behind it, ripples that tilt and travel to one side, and small satellite droplets trailing in the flow direction. It must never read as a crystal, a skincare serum drop, a fruit drop or a bottle. The coral J is the signature (`Wordmark`). This is abstract artwork, **not a product render**.
-
-The background keeps cream dominant: coral and blush diffusion stay faint (about 30–40 % opacity), champagne carries the warmth.
+## Hero visual
+The GlowJ droplet as a living hydration device, not a gem, serum drop or orb on its own.
+- **Water-like:** clear and light at the top, deep coral below; rim of light, inner depth, specular highlight, refracted caustic at the base, a few condensation beads.
+- **Halftone becomes liquid shimmer:** the printed dots stay; a slow band of light passes through them.
+- **Internal flow:** light travels along the white lines between the nodes; nodes breathe.
+- **Hydration cue:** a bead forms at the base and drops to a clear surface with one ripple.
+- **Light:** a fresh liquid-light glow behind it for clarity and contrast.
+No bottle or product render: the real bottle is added with approved product photography.
 
 ## Motion
-Flow, light, ripple, diffusion: slow liquid drift (`motion-drift`, 22–38 s), gentle float with a slight lean (`motion-float`), directional ripple (`motion-ripple`), refracted-light sheen (`motion-sheen`), shifting inner glow (`motion-inner`), flow lines (`motion-stream`), slow staggered reveal (`motion-reveal`). Easing `--ease-flow`. Active energy comes from direction and asymmetry (a gentle current left to right), never from speed. All motion is wrapped in `prefers-reduced-motion: no-preference`; reduced-motion visitors see the static composition. Avoid aggressive wipes, fast kinetic type, cyberpunk glow, bubble/gas effects.
+Flow, light, ripple, diffusion; slow. `motion-float` (10 s), `motion-pulse` (light along lines), `motion-node`, `motion-shimmer`, `motion-sheen`, `motion-drip` and `motion-surface-ripple` (9 s cycle), `motion-reveal`, `motion-drift` (background). All wrapped in `prefers-reduced-motion: no-preference`; reduced-motion visitors see the static composition. Avoid aggressive wipes, fast kinetic type, cyberpunk glow, bubble/gas effects.
 
 ## Layout
-Website mode: airy, editorial, generous whitespace, little copy. Stage 1 is a single focused hero (droplet above copy on mobile; two columns from `lg`), no extra sections. Hierarchy: eyebrow, headline, category line (the product definition, not form helper text), lifestyle moments, supporting sentence, then a compact signup card (input, CTA, consent only).
+Airy, little copy, one focused hero (visual above copy on mobile; two columns from `lg`). Hierarchy: eyebrow, headline, category label (plum pill: the product definition, not form helper text), lifestyle moments, supporting sentence, then a compact signup card (input, CTA, consent only).
 
 ## Photography (not yet in repo)
-Women about 30–50, natural dewy skin, lifestyle (pickleball, pilates, yoga, golf, light gym, cycling, outdoor/social wellness); pickleball is a cue, not the identity. Product shots: light condensation, translucent light, refraction, cream/coral/champagne light; premium hydration, not pink juice.
+Women about 30–50, natural dewy skin, lifestyle (pickleball, pilates, yoga, golf, light gym, cycling, outdoor/social wellness); pickleball is a cue, not the identity. Product shots: light condensation, translucent light, refraction; premium hydration, not pink juice.

@@ -31,7 +31,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <section>
       <Container className="grid items-center gap-6 pb-16 pt-2 lg:min-h-[calc(100dvh-8rem)] lg:grid-cols-12 lg:gap-10 lg:py-10">
-        <div className="motion-reveal order-1 mx-auto w-40 sm:w-52 lg:order-2 lg:col-span-5 lg:w-full lg:max-w-md" style={order(0)}>
+        <div className="motion-reveal relative isolate order-1 mx-auto w-32 sm:w-44 lg:order-2 lg:col-span-5 lg:w-full lg:max-w-[22rem]" style={order(0)}>
+          {/* Fresh liquid light behind the droplet: clarity and contrast for the translucent body. */}
+          <div
+            aria-hidden="true"
+            className="absolute left-1/2 top-[52%] -z-10 aspect-square w-[150%] -translate-x-1/2 -translate-y-1/2 rounded-full [background:radial-gradient(closest-side,var(--color-liquid-deep),var(--color-liquid)_58%,transparent)] opacity-90"
+          />
           <GlowDroplet className="h-auto w-full overflow-visible" />
         </div>
 
@@ -41,14 +46,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {home.eyebrow}
           </p>
 
-          <h1 className="motion-reveal mt-5 max-w-3xl text-balance font-display text-display font-light" style={order(2)}>
+          <h1 className="motion-reveal mt-4 max-w-3xl text-balance font-display text-display font-extrabold" style={order(2)}>
             {headline.before}
-            {headline.accent && <em className="font-normal italic text-glow-strong">{headline.accent}</em>}
+            {headline.accent && <em className="font-accent font-medium italic text-glow-strong">{headline.accent}</em>}
             {headline.after}
           </h1>
 
           {/* Category is the product definition: part of the main hierarchy, not form helper text. */}
-          <p className="motion-reveal mt-4 flex items-center gap-2.5 text-lg font-semibold text-ink sm:text-2xl" style={order(3)}>
+          <p
+            className="motion-reveal mt-5 inline-flex items-center gap-2.5 rounded-full bg-plum py-2 pl-3.5 pr-4 text-base font-semibold text-paper sm:text-lg"
+            style={order(3)}
+          >
             <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-brand" />
             {home.category}
           </p>
@@ -59,7 +67,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
 
           {isEnabled("waitlist") && (
-            <div className="motion-reveal surface-glass mt-7 max-w-xl rounded-card p-4 sm:p-5" style={order(5)}>
+            <div className="motion-reveal surface-card mt-7 max-w-xl rounded-card p-4 sm:p-5" style={order(5)}>
               <SignupForm channel="zalo" locale={locale} placement="hero" {...signup} />
             </div>
           )}

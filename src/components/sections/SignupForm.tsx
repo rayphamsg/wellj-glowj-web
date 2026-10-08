@@ -71,7 +71,7 @@ export function SignupForm({
         required
         placeholder={placeholder}
         aria-describedby={noticeId}
-        className="min-h-12 w-full flex-1 rounded-full border border-line bg-surface px-5 text-base text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong sm:w-auto sm:min-w-0"
+        className="min-h-12 w-full flex-1 rounded-2xl border border-line bg-surface px-5 text-base text-ink placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong sm:w-auto sm:min-w-0"
       />
       <Button type="submit" disabled={pending} className="w-full sm:w-auto">
         {submitLabel}

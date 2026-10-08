@@ -5,7 +5,7 @@ import { cx } from "@/lib/cx";
 type Variant = "primary" | "secondary";
 
 const base =
-  "inline-flex min-h-12 items-center justify-center rounded-full px-6 text-base font-semibold transition duration-500 ease-flow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong disabled:opacity-60";
+  "inline-flex min-h-12 items-center justify-center rounded-2xl px-6 text-base font-bold transition duration-500 ease-flow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-strong disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
   primary: "bg-brand text-brand-contrast shadow-glow hover:brightness-105",
