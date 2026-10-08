@@ -111,34 +111,55 @@ body {
   @keyframes glow-float {
     0%,
     100% {
-      transform: translateY(0);
+      transform: translateY(0) rotate(0deg);
     }
     50% {
-      transform: translateY(-10px);
+      transform: translateY(-9px) rotate(-1.4deg);
     }
   }
+  /* Ripples travel gently to the right as they widen: a directional current. */
   @keyframes glow-ripple {
     0% {
-      transform: scale(0.45);
+      transform: translateX(-4%) scale(0.4);
       opacity: 0;
     }
-    25% {
-      opacity: 0.55;
+    22% {
+      opacity: 0.6;
     }
     100% {
-      transform: scale(1.5);
+      transform: translateX(14%) scale(1.6);
       opacity: 0;
     }
   }
+  /* Refracted light drifts diagonally through the liquid. */
   @keyframes glow-sheen {
     0%,
     100% {
-      opacity: 0.35;
-      transform: translateX(-6%);
+      opacity: 0.3;
+      transform: translate(-9%, 3%);
     }
     50% {
-      opacity: 0.75;
-      transform: translateX(6%);
+      opacity: 0.8;
+      transform: translate(9%, -3%);
+    }
+  }
+  /* Inner glow slowly shifts within the volume. */
+  @keyframes glow-inner {
+    0%,
+    100% {
+      transform: translate(-6%, 2%) scale(1);
+    }
+    50% {
+      transform: translate(7%, -5%) scale(1.12);
+    }
+  }
+  /* Thin flow lines slide through, left to right. */
+  @keyframes glow-stream {
+    from {
+      stroke-dashoffset: 640;
+    }
+    to {
+      stroke-dashoffset: 0;
     }
   }
 
@@ -150,15 +171,26 @@ body {
     animation: glow-drift 22s ease-in-out infinite;
   }
   .motion-float {
+    transform-box: fill-box;
+    transform-origin: 50% 85%;
     animation: glow-float 9s ease-in-out infinite;
   }
   .motion-ripple {
     transform-box: fill-box;
     transform-origin: center;
-    animation: glow-ripple 9s var(--ease-flow) infinite;
+    animation: glow-ripple 8s var(--ease-flow) infinite;
   }
   .motion-sheen {
-    animation: glow-sheen 12s ease-in-out infinite;
+    animation: glow-sheen 13s ease-in-out infinite;
+  }
+  .motion-inner {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: glow-inner 15s ease-in-out infinite;
+  }
+  .motion-stream {
+    stroke-dasharray: 150 490;
+    animation: glow-stream 18s linear infinite;
   }
 }
 

@@ -31,7 +31,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <section>
       <Container className="grid items-center gap-6 pb-16 pt-2 lg:min-h-[calc(100dvh-8rem)] lg:grid-cols-12 lg:gap-10 lg:py-10">
-        <div className="motion-reveal order-1 mx-auto w-44 sm:w-56 lg:order-2 lg:col-span-5 lg:w-full lg:max-w-md" style={order(0)}>
+        <div className="motion-reveal order-1 mx-auto w-40 sm:w-52 lg:order-2 lg:col-span-5 lg:w-full lg:max-w-md" style={order(0)}>
           <GlowDroplet className="h-auto w-full overflow-visible" />
         </div>
 
@@ -47,17 +47,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {headline.after}
           </h1>
 
-          <div className="motion-reveal mt-6 max-w-xl space-y-3" style={order(3)}>
-            <p className="font-display text-lead italic text-ink">{home.support.moments.join(" ")}</p>
+          {/* Category is the product definition: part of the main hierarchy, not form helper text. */}
+          <p className="motion-reveal mt-4 flex items-center gap-2.5 text-lg font-semibold text-ink sm:text-2xl" style={order(3)}>
+            <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-brand" />
+            {home.category}
+          </p>
+
+          <div className="motion-reveal mt-5 max-w-xl space-y-3" style={order(4)}>
+            <p className="text-pretty text-lg font-normal text-ink sm:text-xl">{home.support.moments.join(" ")}</p>
             <p className="text-base leading-relaxed text-muted sm:text-lg sm:leading-relaxed">{home.support.body}</p>
           </div>
 
           {isEnabled("waitlist") && (
-            <div className="motion-reveal surface-glass mt-8 max-w-xl rounded-card p-5 sm:p-6" style={order(4)}>
-              <p className="mb-4 flex items-center gap-2 text-sm font-medium text-ink">
-                <span aria-hidden="true" className="size-1.5 rounded-full bg-brand" />
-                {home.category}
-              </p>
+            <div className="motion-reveal surface-glass mt-7 max-w-xl rounded-card p-4 sm:p-5" style={order(5)}>
               <SignupForm channel="zalo" locale={locale} placement="hero" {...signup} />
             </div>
           )}

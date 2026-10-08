@@ -25,8 +25,9 @@ Approved direction for the Coming Soon phase. Tokens live in `src/app/globals.cs
 Avoid candy pink, neon, black-heavy layouts, salon or fruit-juice looks.
 
 ## Typography
-- **Display:** Fraunces (editorial serif, with optical size and soft axes), light weight; one italic coral accent word per headline. Token: `font-display`, size `text-display`, support line `text-lead`.
+- **Display:** Fraunces (editorial serif, with optical size and soft axes), light weight. Italic is reserved for the single coral headline accent ("luôn tươi" / "Glow"); nowhere else. Token: `font-display`, size `text-display`, support line `text-lead`.
 - **Body/UI:** Plus Jakarta Sans. Token: `font-sans`.
+- The category line is semibold sans and the lifestyle moments are regular sans, so the page reads contemporary and active rather than fashion-editorial.
 - Both load via `next/font/google` (self-hosted at build, no runtime request) and include Vietnamese.
 - No script beauty fonts, no condensed or aggressive sport faces.
 
@@ -34,13 +35,15 @@ Avoid candy pink, neon, black-heavy layouts, salon or fruit-juice looks.
 `py-section` is the vertical rhythm; `rounded-card` (1.75rem) for cards and `rounded-full` for inputs and buttons. `surface-glass` is the frosted-warm-white surface (blur + warm tinted glow shadow). Shadows are warm and tinted (`shadow-soft`, `shadow-glow`), never grey.
 
 ## Brand device
-Faceted droplet (gem geometry) with refracted coral and champagne light, small satellite droplets and ripples beneath: `GlowDroplet`, over the soft diffusion field `RefractionField`. The coral J is the signature (`Wordmark`). This is abstract artwork, **not a bottle or product render**.
+A droplet of liquid light, not a gemstone: `GlowDroplet`, over the soft diffusion field `RefractionField`. It is translucent with internal volume, slightly asymmetric and leaning, with soft blurred facets, refracted light bands that drift diagonally, an inner glow that shifts, thin flow lines behind it, ripples that tilt and travel to one side, and small satellite droplets trailing in the flow direction. It must never read as a crystal, a skincare serum drop, a fruit drop or a bottle. The coral J is the signature (`Wordmark`). This is abstract artwork, **not a product render**.
+
+The background keeps cream dominant: coral and blush diffusion stay faint (about 30–40 % opacity), champagne carries the warmth.
 
 ## Motion
-Flow, light, ripple, diffusion: slow liquid drift (`motion-drift`, 22–38 s), gentle float (`motion-float`), soft ripple (`motion-ripple`), slow staggered reveal (`motion-reveal`), refracted-light sheen (`motion-sheen`). Easing `--ease-flow`. All motion is wrapped in `prefers-reduced-motion: no-preference`; reduced-motion visitors see the static composition. Avoid aggressive wipes, fast kinetic type, cyberpunk glow, bubble/gas effects.
+Flow, light, ripple, diffusion: slow liquid drift (`motion-drift`, 22–38 s), gentle float with a slight lean (`motion-float`), directional ripple (`motion-ripple`), refracted-light sheen (`motion-sheen`), shifting inner glow (`motion-inner`), flow lines (`motion-stream`), slow staggered reveal (`motion-reveal`). Easing `--ease-flow`. Active energy comes from direction and asymmetry (a gentle current left to right), never from speed. All motion is wrapped in `prefers-reduced-motion: no-preference`; reduced-motion visitors see the static composition. Avoid aggressive wipes, fast kinetic type, cyberpunk glow, bubble/gas effects.
 
 ## Layout
-Website mode: airy, editorial, generous whitespace, little copy. Stage 1 is a single focused hero (droplet above copy on mobile; two columns from `lg`), no extra sections.
+Website mode: airy, editorial, generous whitespace, little copy. Stage 1 is a single focused hero (droplet above copy on mobile; two columns from `lg`), no extra sections. Hierarchy: eyebrow, headline, category line (the product definition, not form helper text), lifestyle moments, supporting sentence, then a compact signup card (input, CTA, consent only).
 
 ## Photography (not yet in repo)
 Women about 30–50, natural dewy skin, lifestyle (pickleball, pilates, yoga, golf, light gym, cycling, outdoor/social wellness); pickleball is a cue, not the identity. Product shots: light condensation, translucent light, refraction, cream/coral/champagne light; premium hydration, not pink juice.
