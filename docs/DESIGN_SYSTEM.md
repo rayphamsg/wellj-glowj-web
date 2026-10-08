@@ -1,5 +1,7 @@
 # GlowJ Design System — Stage 1 Coming Soon: "THE FILL LINE"
 
+> **LOCKED. Stage 1 art direction is locked. Do not reopen or reinterpret the visual concept unless explicitly approved by Huy.**
+
 **Status: APPROVED and IMPLEMENTED (Stage 1).**
 This document is the single source of truth for the Stage 1 Coming Soon page. It replaces every earlier Coming Soon direction (soft ambient light, floating droplet with reflection, glass card, bottle hero), none of which remains in the code. See **§22 Implementation notes** for the file map and the (few) deliberate deviations.
 
@@ -71,8 +73,8 @@ The screen is a container being filled. One hard, flat, horizontal **fill line**
 3. Headline, 3 lines (~166px at 56px).
 4. Category line, left, **≤ 58% width** (wraps to 2 lines), beside the droplet apex in the air on the right.
 5. **Fill line at ~51–54% of the first viewport** (~430–455px) → coral coverage **46–49%** (§4). Floor rule applies.
-6. Droplet: **44vw** (~172px) wide, anchored right, **cropped 15–20%** by the right edge; ~58% of its height above the line, the rest below.
-7. In the coral: the visible field label (left, beside the submerged droplet band) → input (full width) → CTA (full width). **CTA bottom edge ≤ ~670px** — visible without scrolling.
+6. Droplet: **44vw** (~172px) wide, anchored right, **cropped 12%** by the right edge (the screen edge falls at 88% of the droplet, clear of the right node's ring, which ends at ~83%: the crop never cuts through a node); ~58% of its height above the line, the rest below.
+7. In the coral: the visible field label (left, bottom-aligned in the band beside the droplet's lower edge, so it sits ~8px above its input) → input (full width) → CTA (full width). **CTA bottom edge ≤ ~670px** — visible without scrolling.
 8. Consent.
 9. Below the fold: moments → body → footer (on coral).
 
@@ -98,7 +100,7 @@ How this prevents the "pink soft drink" read: air always sits on top and holds t
 - **Meniscus:** one **2px air-coloured highlight line, 4px below the edge, at 45% opacity**. This is the only "wet" detail on the page.
 - **Capillary rise:** where the surface meets the droplet, the coral edge curves **up 6–8px (desktop) / 4px (mobile)** over ~24px on each side, like water against a surface. This is what makes it read as liquid, not a section divider.
 - **At rest:** perfectly horizontal.
-- **Motion allowance:** idle swell **≤ 3px**, one wavelength across the full viewport, 7s period. Optional scroll tilt **≤ 1.5°** (see §13).
+- **Motion allowance:** idle swell **≤ 3px** (built as a 2px vertical breathing of the whole surface, 7s period). **No tilt or rotation:** it made the edge and the 2px highlight stair-step, so the line stays perfectly straight.
 - **Must NOT look like:** a wave illustration, ocean, sine squiggle, ripple rings, gooey blob edge, gradient horizon, glossy jelly, drop shadow, or a generic website section divider.
 
 ---
@@ -190,11 +192,11 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 | Motion | Spec | Limits |
 |---|---|---|
 | Initial fill | Coral rises from the bottom edge to the line; halo then fades in over 400ms | ≤ 1.1s, one overshoot ≤ 8px, settles once |
-| Idle surface | One long, low swell of the line | ≤ 3px, 7s period, paused when the tab is hidden |
-| Scroll response (**optional**) | Line tilts with scroll velocity, damps back to level | ≤ 1.5°, back to level within 1.2s. **Omit entirely if it feels gimmicky in testing.** |
+| Idle surface | The whole surface breathes up and down, edge always straight | 2px, 7s period, vertical only, paused when the tab is hidden |
+| Scroll response (**optional**) | **Omitted.** A tilt cannot render cleanly (see §5), so there is no scroll tilt. | n/a |
 | Signup response | Level rises, halo adds one ring | **Restrained:** level +8–10px max, one ring, once, ~900ms. No celebration effects. |
 
-- **Reduced motion:** final state rendered statically (level line, halo visible, no tilt); signup changes the level without animation.
+- **Reduced motion:** final state rendered statically (level line, halo visible, no motion); signup changes the level without animation.
 - **Never animated:** the droplet, the logo, the headline (no fade-up reveals), individual halo dots, the background. No loops except the idle swell.
 
 ---
@@ -272,7 +274,7 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 
 - **Pure CSS:** grid/layout, colours, type, header, form strip, coral field, liquid veil (clipped layer), pour animation, reduced-motion fallbacks, content-driven floor for the line.
 - **SVG:** surface edge with meniscus highlight and idle swell (one wide path translated via CSS); the two capillary-rise pieces attached to the droplet's container so they move with it; the halftone halo generated once on the server as a static SVG scaled with the droplet so its pitch stays locked.
-- **Client JS (small, isolated):** the optional scroll tilt (one passive listener + rAF, disabled under reduced motion); the signup-success signal that raises the level and adds the halo ring (a CSS variable or class set from the existing form's success state).
+- **Client JS (small, isolated):** the signup-success signal that raises the level and adds the halo ring (a CSS variable or class set from the existing form's success state).
 - **Do NOT build:** WebGL/canvas water, interactive dot fields, device-motion "shake", parallax, cursor effects, Lottie/video, time-of-day theming, scroll-jacking, preloaders, droplet displacement/refraction.
 
 ---
@@ -322,7 +324,7 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 **Deliberate deviations from this spec**
 
 1. **Scroll tilt omitted** (it was optional). No scroll listener or client motion code exists.
-2. **Idle swell is a slosh, not a travelling wave:** the liquid layers rotate +-0.14 degrees about a pivot under the droplet (about +-2.8px at the far edges of a 1440px screen, ~0 at the droplet). It meets the "<= 3px, 7s period" limit and keeps the capillary rise and the veil locked to the droplet, which a travelling wave could not.
+2. **Idle swell is a 2px vertical breathing, not a travelling wave or a tilt:** the coral field, capillary rise and veil move together by 2px (7s period, within the 3px limit). An earlier +-0.14 degree tilt was removed because it made the surface edge and its 2px highlight stair-step; a pure vertical move keeps both perfectly straight (verified: 0 edge steps across the swell).
 3. **Droplet placement on desktop** follows the "right edge 7% beyond the content column" rule; its centre lands at about 78% of the viewport width at 1440 (the spec also said ~74%; the two statements disagree, and the edge rule keeps the headline clear).
 4. **Halo coverage:** the 12% limit is read as printed dot coverage, not region area. The halo keeps the 0.75 x droplet-height radius but its dots shrink with a squared falloff so it is felt more than read, and it is cut off 0.25 droplet-widths left of the droplet so neither it nor the signup ring ever reaches the text column.
 5. **Veil at 65%** (top of the 55-65% range) so the submerged silhouette nearly disappears.
@@ -331,3 +333,6 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 8. **Content shape:** `headlineAccent` is now the last word including its full stop ("tuoi." / "Glow."), `headlineLines` carries the manual breaks, and the unused `placeholder` key was removed. The approved copy itself is unchanged.
 9. **Signup response** is driven by a `data-signup` attribute that the form's success state sets on `<html>` (a one-line effect); CSS does the rest.
 10. **"Paused when the tab is hidden"** relies on the browser pausing off-screen CSS animation; no JavaScript is used.
+11. **Mobile droplet crop is 12%** (spec said 15-20%) so the screen edge never cuts through the right node's ring. Tablet stays at 10% (already clear by ~25px).
+12. **Mobile label** is bottom-aligned in the space beside the droplet, so it stays ~8px above its input; the input and CTA did not move (CTA bottom still ~666px at 390x844).
+13. **Accent spacing:** the extra air before "tuoi." / "Glow." is carried by the space in front of it, not by the accent itself, so the accent is flush (within 1px) with the lines above when it starts a line on narrow screens. Desktop spacing is unchanged to the pixel.

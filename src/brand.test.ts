@@ -92,7 +92,7 @@ describe('"The Fill Line" guardrails (docs/DESIGN_SYSTEM.md sections 16-17)', ()
     const users = sources.filter((f) => /Fraunces|headline-accent|font-accent/.test(code(f))).map((f) => f.replace(root, ""));
     assert.deepEqual(users.sort(), ["src/app/[locale]/layout.tsx", "src/app/globals.css", "src/components/fill/Headline.tsx"]);
     assert.match(read("src/app/[locale]/layout.tsx"), /Fraunces\(\{[\s\S]*?weight: \["500"\][\s\S]*?style: \["italic"\]/);
-    assert.match(read("src/components/fill/Headline.tsx"), /word === accent \? <span className="headline-accent text-coral">/);
+    assert.match(read("src/components/fill/Headline.tsx"), /word === accent \? \(\s*<span className=\{cx\("headline-accent text-coral"/);
   });
 
   it("uses exactly the three approved colours", () => {
@@ -100,6 +100,23 @@ describe('"The Fill Line" guardrails (docs/DESIGN_SYSTEM.md sections 16-17)', ()
     for (const hex of ["#f7faf9", "#ef4650", "#0b1212"]) assert.ok(css.toLowerCase().includes(hex), `missing ${hex}`);
     const declared = [...code(join(root, "src/app/globals.css")).matchAll(/#[0-9a-f]{3,8}\b/gi)].map((m) => m[0].toLowerCase());
     for (const hex of declared) assert.ok(["#f7faf9", "#ef4650", "#0b1212"].includes(hex), `unapproved colour ${hex}`);
+  });
+
+  it("never tilts or rotates the liquid (a tilt made the surface edge and highlight stair-step)", () => {
+    assert.ok(!/rotate\(|rotate:/.test(code(join(root, "src/app/globals.css"))), "rotation found in globals.css");
+  });
+
+  it("carries the accent's extra air on the preceding space, so a line-start accent stays flush", () => {
+    const css = code(join(root, "src/app/globals.css"));
+    assert.ok(!/\.headline-accent\s*\{[^}]*margin-left/.test(css), "margin-left on .headline-accent would indent it at line start");
+    assert.match(css, /\.accent-gap\s*\{[^}]*margin-right/);
+  });
+
+  it("crops the droplet by no more than 12% on mobile, so the right node is never cut", () => {
+    const css = read("src/app/globals.css");
+    const m = css.match(/--drop-w:\s*max\(160px, 44vw\)[\s\S]*?--drop-right:\s*calc\(var\(--drop-w\) \* -(0\.\d+)\)/);
+    assert.ok(m, "mobile --drop-right not found");
+    assert.ok(Number(m[1]) <= 0.12, `mobile crop ${m[1]} would reach the right node (ring ends at 83% of the droplet)`);
   });
 
   it("keeps the veil within 55-65% coral and the halo in the air only", () => {

@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { cx } from "@/lib/cx";
 
 type HeadlineProps = {
   headline: string;
@@ -34,13 +35,23 @@ export function Headline({ headline, accent, lines }: HeadlineProps) {
     <h1 className="headline">
       {words.map((word, i) => {
         const isLast = i === words.length - 1;
-        const w = word === accent ? <span className="headline-accent text-coral">{word}</span> : word;
+        // The extra air before the accent lives on the SPACE that precedes it, not on the accent itself,
+        // so an accent that starts a line (narrow screens) stays flush with the lines above.
+        const gap = words[i + 1] === accent ? "accent-gap" : "";
+        const startsNarrowLine = i > 0 && narrow.has(i - 1);
+        const startsWideLine = i > 0 && wide.has(i - 1);
+        const w =
+          word === accent ? (
+            <span className={cx("headline-accent text-coral", startsNarrowLine && "max-lg:-ml-[0.015em]", startsWideLine && "lg:-ml-[0.015em]")}>{word}</span>
+          ) : (
+            word
+          );
         let separator: React.ReactNode = null;
         if (!isLast) {
           if (wide.has(i) && narrow.has(i)) separator = <br />;
-          else if (narrow.has(i)) separator = (<><br className="lg:hidden" /><span className="hidden lg:inline"> </span></>);
-          else if (wide.has(i)) separator = (<><span className="lg:hidden"> </span><br className="hidden lg:inline" /></>);
-          else separator = " ";
+          else if (narrow.has(i)) separator = (<><br className="lg:hidden" /><span className={cx("hidden lg:inline", gap)}> </span></>);
+          else if (wide.has(i)) separator = (<><span className={cx("lg:hidden", gap)}> </span><br className="hidden lg:inline" /></>);
+          else separator = gap ? <span className={gap}> </span> : " ";
         }
         return (
           <Fragment key={i}>

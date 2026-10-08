@@ -3,9 +3,12 @@
 Official site for **GlowJ by WellJ** at `https://drinkglowj.com`. GlowJ is a **separate brand from IronJ**; only the technical foundation is shared in pattern. The maintainer is a non-technical founder: explain changes in plain language and keep them small.
 
 ## Current status
+**Stage 1 art direction is locked. Do not reopen or reinterpret the visual concept unless explicitly approved by Huy.**
+
 **Stage 1 "The Fill Line" is implemented.** [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) is the source of truth (colours, composition, typography, motion, form, guardrails, file map, deviations). Its guardrails are enforced by tests in `src/brand.test.ts`. Approved copy is unchanged. Still open: consent/microcopy wording, favicon/OG, hosting, production secrets. See [docs/BRAND_PENDING.md](docs/BRAND_PENDING.md).
 
 ## Operating rules
+- **Stage 1 art direction is locked. Do not reopen or reinterpret the visual concept unless explicitly approved by Huy.** Fixes inside the approved design (bugs, polish that changes no layout, colour, type pairing, droplet, halo or copy) are fine; a new concept, direction, photography or rearranged composition is not.
 - Work on a branch and never push to `main` directly. Do not open a PR unless asked.
 - Before finishing any change, run `npm run lint`, `npm run typecheck`, `npm test` and `npm run build`. Report real results.
 - Do NOT add a CMS, database, authentication, ecommerce engine, analytics or new dependencies without explicit approval.

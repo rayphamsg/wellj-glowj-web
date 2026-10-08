@@ -54,7 +54,9 @@ body {
   /* Official droplet: width/height ratio 1000:1259. Mobile: 44vw wide, cropped 17% by the right edge. */
   --drop-w: max(160px, 44vw);
   --drop-h: calc(var(--drop-w) * 1.259);
-  --drop-right: calc(var(--drop-w) * -0.17);
+  /* Cropped 12% by the right edge: the screen edge falls at 88% of the droplet, clear of the right
+   * node's ring (which ends at ~83%). Position only; the asset is never scaled or altered. */
+  --drop-right: calc(var(--drop-w) * -0.12);
   --drop-line: 0.58; /* the fill line crosses the droplet at 58% of its height */
 
   /* Droplet width at the fill line (fractions of its width), measured from the asset. */
@@ -169,8 +171,11 @@ main {
   color: var(--color-ink);
 }
 
-/* Mobile: the label sits beside the submerged part of the droplet; the input starts below it. */
+/* Mobile: the input starts below the submerged part of the droplet. The label is bottom-aligned in
+ * that space, so it stays attached to its input (beside the droplet's lower edge, never over it). */
 .signup-lead {
+  display: flex;
+  align-items: flex-end;
   min-height: calc(var(--drop-h) * (1 - var(--drop-line)) - 12px);
 }
 
@@ -192,8 +197,6 @@ main {
   bottom: -80px;
   left: -4vw;
   background: var(--color-coral);
-  /* The swell pivots under the droplet: still at the droplet, a few px at the far edges. */
-  transform-origin: calc(100% - 4vw - var(--drop-right) - var(--drop-w) / 2) 0;
 }
 
 /* Meniscus: the one "wet" detail. 2px air line, 4px below the surface, 45%. */
@@ -206,11 +209,6 @@ main {
   height: 2px;
   background: var(--color-air);
   opacity: 0.45;
-}
-
-.cap,
-.fill-veil {
-  transform-origin: 50% 0;
 }
 
 .cap {
@@ -318,7 +316,12 @@ html[data-signup="success"] .halo-ring {
   font-size: 1.05em; /* optical match with the sans, kept just under it so the accent stays refined */
   letter-spacing: -0.005em;
   padding-right: 0.04em; /* italic overhang */
-  margin-left: 0.07em; /* a little more air after the upright word */
+}
+
+/* A little more air before the accent. Carried by the space in front of it (see Headline.tsx),
+ * so it never indents an accent that begins a line. 0.0735em = 0.07em of the 1.05em accent. */
+.accent-gap {
+  margin-right: 0.0735em;
 }
 
 @media (min-width: 768px) {
@@ -350,12 +353,14 @@ html[data-signup="success"] .halo-ring {
     }
   }
 
+  /* The surface breathes 2px up and down. A pure vertical move keeps the edge perfectly straight
+   * (a tilt made the 2px meniscus highlight stair-step), and the capillary rise and veil move with it. */
   @keyframes fill-swell {
     from {
-      transform: rotate(-0.14deg);
+      transform: translateY(0);
     }
     to {
-      transform: rotate(0.14deg);
+      transform: translateY(-2px);
     }
   }
 
