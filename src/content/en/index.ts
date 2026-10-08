@@ -23,6 +23,7 @@ export const en: Dictionary = {
     },
     category: "Natural hydration for active women.",
   },
+  bottleAlt: "GlowJ bottle",
   signup: {
     label: "Your Zalo number",
     placeholder: "Your Zalo number",

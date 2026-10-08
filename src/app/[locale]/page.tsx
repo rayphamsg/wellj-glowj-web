@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { SignupForm } from "@/components/sections/SignupForm";
 import { Container } from "@/components/ui/Container";
-import { GlowDroplet } from "@/components/visual/GlowDroplet";
+import { HeroVisual } from "@/components/visual/HeroVisual";
 import { isEnabled } from "@/config/features";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { isLocale } from "@/lib/i18n/locales";
@@ -25,19 +25,14 @@ function splitHeadline(headline: string, accent: string) {
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const { home, signup } = getDictionary(locale);
+  const { home, signup, bottleAlt } = getDictionary(locale);
   const headline = splitHeadline(home.headline, home.headlineAccent);
 
   return (
     <section>
       <Container className="grid items-center gap-6 pb-16 pt-2 lg:min-h-[calc(100dvh-8rem)] lg:grid-cols-12 lg:gap-10 lg:py-10">
-        <div className="motion-reveal relative isolate order-1 mx-auto w-32 sm:w-44 lg:order-2 lg:col-span-5 lg:w-full lg:max-w-[22rem]" style={order(0)}>
-          {/* Fresh liquid light behind the droplet: clarity and contrast for the translucent body. */}
-          <div
-            aria-hidden="true"
-            className="absolute left-1/2 top-[52%] -z-10 aspect-square w-[150%] -translate-x-1/2 -translate-y-1/2 rounded-full [background:radial-gradient(closest-side,var(--color-liquid-deep),var(--color-liquid)_58%,transparent)] opacity-90"
-          />
-          <GlowDroplet className="h-auto w-full overflow-visible" />
+        <div className="motion-reveal order-1 mx-auto w-48 sm:w-60 lg:order-2 lg:col-span-5 lg:w-full lg:max-w-[25rem]" style={order(0)}>
+          <HeroVisual bottleAlt={bottleAlt} />
         </div>
 
         <div className="order-2 lg:order-1 lg:col-span-7">

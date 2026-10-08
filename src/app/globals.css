@@ -27,8 +27,8 @@
   --color-blush: #f9d3c8;
   --color-champagne: #f2ddb9;
   --color-plum: #4a2540; /* premium anchor: category label, dark accents */
-  --color-liquid: #eef1c4; /* the drink's own pale lime-gold liquid, as light only; never text or brand fill */
-  --color-liquid-deep: #dfe79c;
+  --color-liquid: #fde8e6; /* the drink's own pale pink liquid (from the bottle), as light only; never text or brand fill */
+  --color-liquid-deep: #fbc9c8;
   --color-wordmark: #121212; /* the label's black for the "glow" wordmark only */
   --color-accent: var(--color-champagne);
 
@@ -81,6 +81,16 @@ body {
   background: var(--color-surface);
   border: 1px solid var(--color-line);
   box-shadow: var(--shadow-soft);
+}
+
+/* A slow pass of light over the bottle's own silhouette (the mask is set inline). */
+.bottle-sheen {
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 0.5) 50%, transparent 62%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  pointer-events: none;
 }
 
 /*
@@ -180,6 +190,16 @@ body {
       opacity: 0.45;
     }
   }
+  @keyframes glow-bottle-sheen {
+    0%,
+    30% {
+      background-position: 100% 0;
+    }
+    75%,
+    100% {
+      background-position: 0% 0;
+    }
+  }
   /* A band of light passes through the halftone dots. */
   @keyframes glow-shimmer {
     from {
@@ -233,6 +253,9 @@ body {
   }
   .motion-shimmer {
     animation: glow-shimmer 12s ease-in-out infinite;
+  }
+  .bottle-sheen {
+    animation: glow-bottle-sheen 10s ease-in-out infinite;
   }
   .motion-sheen {
     animation: glow-sheen 11s ease-in-out infinite;

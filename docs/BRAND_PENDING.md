@@ -9,7 +9,7 @@ The GlowJ direction is **approved for the Stage 1 Coming Soon design** (see [DES
 | Consent version | `draft-0` (wording is the draft above) | `src/lib/lead-capture/consent.ts` |
 | Logo | Vectorised from the official label artwork (inline header arrangement). Replace with official vector files / confirm horizontal lockup | `src/components/brand/logo-paths.ts`, `Wordmark.tsx` |
 | Droplet | Rebuilt from measured label geometry (not an official vector). Replace with official file if supplied | `src/components/visual/GlowDroplet.tsx` |
-| Product imagery / bottle | None yet: the website does not draw a bottle. Add approved product photography | — |
+| Bottle | Approved bottle mockup (clear PET, pink/coral liquid), cut out from the supplied image; replace with approved product photography when available | `public/images/glowj-bottle.webp`, `HeroVisual.tsx` |
 | Photography | None yet | — |
 | Favicon / OG image | Not provided | — |
 | Contact / social links | `null` | `src/content/site.ts` |

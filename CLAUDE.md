@@ -9,7 +9,7 @@ Official site for **GlowJ by WellJ** at `https://drinkglowj.com`. GlowJ is a **s
 - Work on a branch and never push to `main` directly. Do not open a PR unless asked.
 - Before finishing any change, run `npm run lint`, `npm run typecheck`, `npm test` and `npm run build`. Report real results.
 - Do NOT add a CMS, database, authentication, ecommerce engine, analytics or new dependencies without explicit approval.
-- Do not go beyond the approved direction in `docs/DESIGN_SYSTEM.md`: no new brand colours, fonts, claims, category wording or invented assets (never a fake final bottle; the site shows no bottle until approved photography exists). Use `AssetPlaceholder` / marked placeholders until approved material is provided. Copy marked DRAFT is not approved.
+- Do not go beyond the approved direction in `docs/DESIGN_SYSTEM.md`: no new brand colours, fonts, claims, category wording or invented assets (never draw or alter a bottle: the only bottle is the approved mockup image, `public/images/glowj-bottle.webp`, with its translucent pink/coral liquid). Use `AssetPlaceholder` / marked placeholders until approved material is provided. Copy marked DRAFT is not approved.
 - Never copy anything from the IronJ repo into GlowJ except neutral technical code: no IronJ copy, colours, assets, J-device, motion language or category wording.
 - All visible copy lives in `src/content/{vi,en}/`, not in components. Both languages share the `Dictionary` type in `src/content/types.ts`.
 - Use semantic design tokens only (`src/app/globals.css`); never raw colours in components. Keep motion slow and reduced-motion safe.

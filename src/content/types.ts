@@ -22,5 +22,7 @@ export type Dictionary = {
     /** Category line shown with the signup. */
     category: string;
   };
+  /** Alt text for the bottle image. */
+  bottleAlt: string;
   signup: SignupCopy;
 };
