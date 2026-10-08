@@ -12,8 +12,13 @@ export type Dictionary = {
     eyebrow: string;
     /** Full headline. */
     headline: string;
-    /** The part of `headline` set in the italic accent. Must be a substring of it. */
+    /** The last word of `headline`, set in coral (including its full stop). */
     headlineAccent: string;
+    /**
+     * Manual line breaks (presentation only). Each set, joined with spaces, must equal `headline`.
+     * `wide` is used from the desktop breakpoint, `narrow` below it.
+     */
+    headlineLines: { wide: string[]; narrow: string[] };
     support: {
       /** Short moments, shown as one flowing line. */
       moments: string[];

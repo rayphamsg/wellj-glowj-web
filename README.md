@@ -2,7 +2,7 @@
 
 Official GlowJ by WellJ website (`https://drinkglowj.com`) — pre-launch, crowdfunding and launch site.
 
-**Status:** Stage 1 (coming-soon); approved art direction "The Fill Line" is specified but not yet implemented; indexing is off. Visual system: `docs/DESIGN_SYSTEM.md`. Open items: `docs/BRAND_PENDING.md`.
+**Status:** Stage 1 (coming-soon), "The Fill Line" art direction implemented; indexing is off. Visual system: `docs/DESIGN_SYSTEM.md`. Open items: `docs/BRAND_PENDING.md`.
 
 ```
 npm ci

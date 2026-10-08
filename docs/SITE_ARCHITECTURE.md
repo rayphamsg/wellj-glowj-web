@@ -8,7 +8,8 @@ Next.js 16 (App Router, pinned exactly), React 19, TypeScript (strict), Tailwind
 src/
   app/[locale]/        layout.tsx (html lang, metadata), page.tsx
   app/                 robots.ts, sitemap.ts, globals.css
-  components/ui|layout|sections|visual/
+  components/            brand/ (official logo), fill/ (liquid, droplet, headline), layout/, sections/, ui/
+  scripts/               generate-halo.mjs (static halftone halo, output committed)
   config/              stage.ts, features.ts, seo.ts
   content/             site.ts (brand facts), types.ts (Dictionary), vi/, en/, signup-copy.ts
   lib/i18n/            locales, dictionary loader

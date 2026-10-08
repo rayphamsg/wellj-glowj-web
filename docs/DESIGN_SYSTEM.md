@@ -1,7 +1,7 @@
 # GlowJ Design System — Stage 1 Coming Soon: "THE FILL LINE"
 
-**Status: APPROVED final art direction. NOT YET IMPLEMENTED.**
-This document is the single source of truth for the Stage 1 Coming Soon page. It replaces every earlier Coming Soon direction (soft ambient light, floating droplet with reflection, glass card, serif-italic accent, bottle hero). The code on this branch still reflects the superseded direction until the implementation session rebuilds it. See **§22 Implementation checklist**.
+**Status: APPROVED and IMPLEMENTED (Stage 1).**
+This document is the single source of truth for the Stage 1 Coming Soon page. It replaces every earlier Coming Soon direction (soft ambient light, floating droplet with reflection, glass card, serif-italic accent, bottle hero), none of which remains in the code. See **§22 Implementation notes** for the file map and the (few) deliberate deviations.
 
 **Design principle (use it to judge every decision):**
 > If it couldn't be screen-printed in mineral white, coral and black and still read as a drink filling up, it doesn't belong on the page.
@@ -299,15 +299,35 @@ Only through: Black-weight type at poster scale with tight tracking and hard ful
 
 ---
 
-## 22. Implementation checklist (for the build session)
+## 22. Implementation notes
 
-The current code reflects the superseded direction. When implementing, replace or remove:
+**File map**
 
-- **Tokens** (`src/app/globals.css`): set `air #F7FAF9`, `coral #EF4650`, `ink #0B1212`; remove `paper` cream `#FFFAF4`, `surface`, `plum`, `glow`, `blush`, `champagne`, `clear`, `brand-strong`/`glow-strong` variants that are no longer needed; remove shadow and radius tokens; remove `surface-card`, `droplet-fx`, `droplet-reflection` and the old motion keyframes.
-- **Fonts** (`src/app/[locale]/layout.tsx`): replace Montserrat + Fraunces + Plus Jakarta Sans with Be Vietnam Pro (Vietnamese subset); keep Plus Jakarta Sans only as the documented backup.
-- **Hero:** replace `HeroVisual.tsx` (reflection, ripples, refraction overlays, glow) and `RefractionField.tsx` (ambient blobs) with the fill-line composition (§3–7).
-- **Page** (`src/app/[locale]/page.tsx`): remove the plum category pill and the card wrapper; apply the manual line breaks and hierarchy (§8, §20). Do not change copy in `src/content/`.
-- **Form** (`SignupForm.tsx`, `Button.tsx`): restyle only (strip, 0 radius, visible label, no placeholder, states in §14); lead-capture logic unchanged.
-- **Header** (`Header.tsx`, `LanguageSwitcher.tsx`): logo 56/44px, text "VI / EN" switch, not sticky.
-- **Keep:** official logo component and droplet asset untouched; `src/brand.test.ts` guards (no bottle, official assets) must keep passing; noindex, SEO, locale and stage architecture unchanged.
-- **Verify** at 390 / 820 / 1440 (VI and EN), coral coverage per §4, contrast per §18, reduced motion, and run lint, typecheck, tests and build.
+| Concern | File |
+|---|---|
+| Tokens (three colours), stage geometry, liquid layers, type, motion | `src/app/globals.css` |
+| Page composition (air above, liquid below) | `src/app/[locale]/page.tsx` |
+| Coral field, capillary rise, official droplet, halo, veil | `src/components/fill/FillLine.tsx` |
+| Headline with manual breaks per breakpoint | `src/components/fill/Headline.tsx` |
+| Official logo (unchanged paths and colours) | `src/components/brand/GlowJLogo.tsx` (via `layout/Wordmark.tsx`) |
+| Header, language switch, footer | `src/components/layout/*` |
+| Form strip (lead-capture logic untouched) | `src/components/sections/SignupForm.tsx`, `ui/Button.tsx` |
+| Halo generator (static output, committed) | `scripts/generate-halo.mjs` -> `public/images/glowj-halo.svg`, `glowj-halo-ring.svg` |
+| Guardrail tests | `src/brand.test.ts`, `src/content/content.test.ts` |
+
+**Guardrails are enforced by tests** (`npm test` fails if any of these reappear in `src/`): gradients, backdrop/glass, shadows, blur, italic, serif or the retired fonts, rounded corners, warm off-whites, white, any colour other than the three approved, any bottle/packaging file or reference, any alteration of the droplet image.
+
+**Geometry as built.** The stage is plain flow layout: `.air-zone` (min-height 52.5 / 56 / 58 svh, content-driven, so the floor rule holds by construction) above `.liquid`. The fill line is the top edge of `.liquid`; the droplet box is anchored to it and shifted up by 58% of its own height. Verified (VI and EN): coral share of the first viewport is 48% at 390x844 and 46-48% at 360x740, 44% on tablet, 42% at 1440x900 (shorter desktop windows get less, never more, because of the floor rule); the mobile CTA ends at ~666px; no horizontal overflow at any tested size.
+
+**Deliberate deviations from this spec**
+
+1. **Scroll tilt omitted** (it was optional). No scroll listener or client motion code exists.
+2. **Idle swell is a slosh, not a travelling wave:** the liquid layers rotate +-0.14 degrees about a pivot under the droplet (about +-2.8px at the far edges of a 1440px screen, ~0 at the droplet). It meets the "<= 3px, 7s period" limit and keeps the capillary rise and the veil locked to the droplet, which a travelling wave could not.
+3. **Droplet placement on desktop** follows the "right edge 7% beyond the content column" rule; its centre lands at about 78% of the viewport width at 1440 (the spec also said ~74%; the two statements disagree, and the edge rule keeps the headline clear).
+4. **Halo coverage:** the 12% limit is read as printed dot coverage, not region area. The halo keeps the 0.75 x droplet-height radius but its dots shrink with a squared falloff so it is felt more than read, and it is cut off 0.25 droplet-widths left of the droplet so neither it nor the signup ring ever reaches the text column.
+5. **Veil at 65%** (top of the 55-65% range) so the submerged silhouette nearly disappears.
+6. **Mobile category line:** its 40px rule sits above the text (not beside it) so it wraps to two lines at 66% width.
+7. **Form strip is stacked (input over CTA) below 1024px**, including tablet, because 58% of a tablet is too narrow for a side-by-side strip; from 1024px it is `[input | CTA]`.
+8. **Content shape:** `headlineAccent` is now the last word including its full stop ("tuoi." / "Glow."), `headlineLines` carries the manual breaks, and the unused `placeholder` key was removed. The approved copy itself is unchanged.
+9. **Signup response** is driven by a `data-signup` attribute that the form's success state sets on `<html>` (a one-line effect); CSS does the rest.
+10. **"Paused when the tab is hidden"** relies on the browser pausing off-screen CSS animation; no JavaScript is used.

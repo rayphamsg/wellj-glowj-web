@@ -39,3 +39,14 @@ describe("content", () => {
     assert.ok(!text.includes("bù khoáng tự nhiên"));
   });
 });
+
+describe("headline line breaks", () => {
+  for (const [name, d] of [["vi", vi], ["en", en]] as const) {
+    it(`${name}: both manual-break sets spell the approved headline, and the accent is its last word`, () => {
+      assert.equal(d.home.headlineLines.wide.join(" "), d.home.headline);
+      assert.equal(d.home.headlineLines.narrow.join(" "), d.home.headline);
+      assert.ok(d.home.headline.endsWith(d.home.headlineAccent));
+      assert.ok(!d.home.headlineAccent.includes(" "));
+    });
+  }
+});

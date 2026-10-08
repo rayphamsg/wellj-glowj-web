@@ -1,13 +1,13 @@
 import { cx } from "@/lib/cx";
 
 type AssetPlaceholderProps = {
-  /** What is missing, e.g. "Logo" or "Hero product photo". */
+  /** What is missing, e.g. "Hero photograph". */
   label: string;
   className?: string;
 };
 
 /**
- * Visibly marks a spot where a real brand asset has not been provided yet.
+ * Visibly marks a spot where an approved asset has not been provided yet.
  * Replace usages with the real asset; never ship this as final.
  */
 export function AssetPlaceholder({ label, className }: AssetPlaceholderProps) {
@@ -15,10 +15,7 @@ export function AssetPlaceholder({ label, className }: AssetPlaceholderProps) {
     <div
       role="img"
       aria-label={`Placeholder: ${label}`}
-      className={cx(
-        "flex items-center justify-center border border-dashed border-muted bg-line/40 p-4 text-center text-xs font-medium uppercase tracking-wide text-muted",
-        className,
-      )}
+      className={cx("flex items-center justify-center border-2 border-dashed border-ink p-4 text-center text-xs font-bold uppercase", className)}
     >
       Placeholder: {label}
     </div>

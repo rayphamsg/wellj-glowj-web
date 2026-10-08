@@ -13,6 +13,13 @@ function walk(dir: string): string[] {
   });
 }
 
+/** Source text without comments, so rules can be written in comments without tripping the guards. */
+function code(file: string): string {
+  return readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+}
+
+const sources = walk(join(root, "src")).filter((f) => /\.(ts|tsx|css)$/.test(f) && !f.endsWith(".test.ts"));
+
 describe("brand isolation (Stage 1)", () => {
   it("serves no bottle or packaging file on any route", () => {
     const served = walk(join(root, "public")).map((f) => f.toLowerCase());
@@ -21,18 +28,16 @@ describe("brand isolation (Stage 1)", () => {
   });
 
   it("references no bottle in the app or components", () => {
-    for (const file of walk(join(root, "src")).filter((f) => /\.(ts|tsx|css)$/.test(f) && !f.endsWith(".test.ts"))) {
-      const text = readFileSync(file, "utf8");
-      // Comments may say "no bottle"; code must not load one.
-      assert.ok(!/glowj-bottle|bottle\.(png|webp|jpe?g|svg)|bottleAlt/i.test(text), `bottle reference in ${file}`);
+    for (const file of sources) {
+      assert.ok(!/glowj-bottle|bottle\.(png|webp|jpe?g|svg)|bottleAlt/i.test(code(file)), `bottle reference in ${file}`);
     }
   });
 
-  it("header uses the official logo and the hero uses the official droplet", () => {
+  it("header uses the official logo and the page uses the official droplet", () => {
     assert.match(read("src/components/layout/Header.tsx"), /Wordmark/);
     assert.match(read("src/components/layout/Wordmark.tsx"), /GlowJLogo/);
-    assert.match(read("src/components/visual/HeroVisual.tsx"), /\/images\/glowj-droplet\.webp/);
-    assert.match(read("src/app/[locale]/page.tsx"), /HeroVisual/);
+    assert.match(read("src/components/fill/FillLine.tsx"), /\/images\/glowj-droplet\.webp/);
+    assert.match(read("src/app/[locale]/page.tsx"), /FillLine/);
   });
 
   it("keeps the official logo paths and colours unchanged", () => {
@@ -40,5 +45,45 @@ describe("brand isolation (Stage 1)", () => {
     assert.match(logo, /#ef4650/); // coral J
     assert.match(logo, /#0b1212/); // wordmark
     assert.equal((logo.match(/<path /g) ?? []).length, 5);
+  });
+
+  it("never alters the droplet image (no filter, transform, rotation or recolour on it)", () => {
+    const fill = read("src/components/fill/FillLine.tsx");
+    const droplet = fill.match(/<Image[^>]*glowj-droplet\.webp[^>]*\/>/)?.[0] ?? "";
+    assert.ok(droplet.length > 0);
+    assert.ok(!/filter|rotate|scale|blur|style=/.test(droplet), "droplet image must be unmodified");
+  });
+});
+
+describe('"The Fill Line" guardrails (docs/DESIGN_SYSTEM.md sections 16-17)', () => {
+  const banned: Array<[RegExp, string]> = [
+    [/gradient\(/i, "gradient"],
+    [/backdrop-|backdrop:/i, "glass / backdrop filter"],
+    [/box-shadow|drop-shadow|shadow-|text-shadow/i, "shadow"],
+    [/blur/i, "blur"],
+    [/\bitalic\b|font-style:\s*italic/i, "italic"],
+    [/(?<!sans-)\bserif\b|Fraunces|Montserrat|Plus_Jakarta/i, "serif / retired fonts"],
+    [/rounded|border-radius/i, "rounded corners"],
+    [/#fffaf4|#fdfcfb|beige|ivory|parchment|cream/i, "warm off-white"],
+    [/bg-white|text-white|#fff\b|#ffffff/i, "white (air is #F7FAF9)"],
+  ];
+
+  for (const [pattern, name] of banned) {
+    it(`uses no ${name}`, () => {
+      for (const file of sources) assert.ok(!pattern.test(code(file)), `${name} found in ${file}`);
+    });
+  }
+
+  it("uses exactly the three approved colours", () => {
+    const css = read("src/app/globals.css");
+    for (const hex of ["#f7faf9", "#ef4650", "#0b1212"]) assert.ok(css.toLowerCase().includes(hex), `missing ${hex}`);
+    const declared = [...code(join(root, "src/app/globals.css")).matchAll(/#[0-9a-f]{3,8}\b/gi)].map((m) => m[0].toLowerCase());
+    for (const hex of declared) assert.ok(["#f7faf9", "#ef4650", "#0b1212"].includes(hex), `unapproved colour ${hex}`);
+  });
+
+  it("keeps the veil within 55-65% coral and the halo in the air only", () => {
+    const css = read("src/app/globals.css");
+    assert.match(css, /\.fill-veil[\s\S]*?opacity:\s*0\.(5[5-9]|6[0-5]?)\b/);
+    assert.match(read("src/components/fill/FillLine.tsx"), /glowj-halo\.svg/);
   });
 });

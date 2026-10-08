@@ -1,221 +1,376 @@
 @import "tailwindcss";
 
 /*
- * GlowJ visual system (Stage 1). Direction approved; see docs/DESIGN_SYSTEM.md.
- * Components use these semantic token names, never raw colours.
- *
- * Palette logic: Cream / warm white = dominant base. Glow Coral = main brand
- * signal. Deep Plum = premium anchor for type. Champagne + blush = soft
- * luminous accents (hydration / glow signal). Avoid candy pink and neon.
+ * GlowJ Stage 1 "The Fill Line" (docs/DESIGN_SYSTEM.md is the source of truth).
+ * Three flat colours, nothing else: mineral-white air above, official coral
+ * liquid below, ink for everything printed. Flat and matte by design.
  */
 @theme {
-  /* Surfaces and text */
-  --color-paper: #fffaf4; /* page base: cream */
-  --color-surface: #fffdf9; /* raised surfaces */
-  --color-ink: #35192b; /* deep plum: text, 14.7:1 on paper */
-  --color-muted: #6e5163; /* secondary text, 6.5:1 on paper */
-  --color-line: #e7ddd2; /* hairlines */
-
-  /* Brand signal */
-  --color-brand: #ef4650; /* Glow Coral: the official logo coral */
-  --color-brand-contrast: #1d0b17; /* text on brand fills, 5.2:1 */
-  --color-brand-strong: #b62233; /* coral for small text/focus on paper, 6.2:1 */
-  --color-glow-strong: #d93a48; /* large display use only (headline accent), 4.4:1 */
-
-  /* Soft luminous accents (decorative, never text) */
-  --color-glow: #f79590;
-  --color-blush: #fad2cf;
-  --color-champagne: #f2ddb9;
-  --color-plum: #4a2540; /* premium anchor: category label, dark accents */
-  --color-clear: #dcedf2; /* clear, cool water light: freshness only, never text or brand fill */
-  --color-accent: var(--color-champagne);
-
-  /* Type: editorial display + clean sans (families wired in the root layout) */
-  --text-display: clamp(2.25rem, 1.3rem + 4.2vw, 4.25rem);
-  --text-display--line-height: 1.02;
-  --text-display--letter-spacing: -0.035em;
-  --text-lead: clamp(1.125rem, 1rem + 0.7vw, 1.5rem);
-  --text-lead--line-height: 1.45;
-  --text-eyebrow: 0.75rem;
-  --text-eyebrow--line-height: 1;
-  --text-eyebrow--letter-spacing: 0.28em;
-
-  /* Spacing + shape */
-  --spacing-section: clamp(4rem, 3rem + 6vw, 8rem);
-  --radius-card: 1.25rem;
-
-  /* Elevation: soft, warm, tinted; never grey drop shadows */
-  --shadow-soft: 0 1px 2px rgb(53 25 43 / 0.06), 0 14px 32px -18px rgb(53 25 43 / 0.32);
-  --shadow-glow: 0 18px 40px -22px rgb(242 123 104 / 0.55);
-
-  /* Motion: flow, light, ripple, diffusion. Slow and soft; never fast or kinetic. */
-  --ease-flow: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --color-air: #f7faf9; /* neutral-cool mineral white (fallback only if too cold: #fffdfc) */
+  --color-coral: #ef4650; /* official coral */
+  --color-ink: #0b1212; /* official black */
 }
 
 @theme inline {
   --font-sans: var(--font-body-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-display-face), ui-sans-serif, system-ui, sans-serif;
-  --font-accent: var(--font-accent-face), ui-serif, Georgia, "Times New Roman", serif;
 }
 
 html {
+  background: var(--color-air);
   scroll-behavior: smooth;
 }
 
 body {
-  background: var(--color-paper);
+  background: var(--color-air);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  font-weight: 500;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--color-blush);
+  background: var(--color-ink);
+  color: var(--color-air);
+}
+
+/* Focus: ink, 3px, offset 3px. Visible on both air and coral. */
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------------
+ * The stage: air above the fill line, coral below. All geometry hangs off these
+ * variables so the droplet, the capillary rise and the veil always agree.
+ * ------------------------------------------------------------------------- */
+.stage {
+  --gutter: 1.5rem;
+  --content-max: 1200px;
+  --header-h: 64px;
+  --air-top-gap: 24px; /* eyebrow sits this far below the header (mobile) */
+  --air-h: 52.5svh; /* fill line at ~52.5% -> coral 46-49% of the first mobile screen */
+
+  /* Official droplet: width/height ratio 1000:1259. Mobile: 44vw wide, cropped 17% by the right edge. */
+  --drop-w: max(160px, 44vw);
+  --drop-h: calc(var(--drop-w) * 1.259);
+  --drop-right: calc(var(--drop-w) * -0.17);
+  --drop-line: 0.58; /* the fill line crosses the droplet at 58% of its height */
+
+  /* Droplet width at the fill line (fractions of its width), measured from the asset. */
+  --edge-l: 0.026;
+  --edge-r: 0.974;
+
+  /* Capillary rise (meniscus climbing the droplet): height, tail, length. rise : (rise + tail) stays 4 : 7. */
+  --rise: 4px;
+  --tail: 3px;
+  --cap-len: 14px;
+
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  overflow: hidden;
+  overflow: clip;
+}
+
+@media (min-width: 768px) {
+  .stage {
+    --gutter: 2rem;
+    --air-top-gap: 32px;
+    --air-h: 56svh;
+    --drop-right: calc(var(--drop-w) * -0.1);
+    --rise: 6px;
+    --tail: 4.5px;
+    --cap-len: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stage {
+    --header-h: 80px;
+    --air-top-gap: 40px;
+    --air-h: 58svh;
+    --drop-h: clamp(380px, 66svh, 760px);
+    --drop-w: calc(var(--drop-h) / 1.259);
+    /* Right edge 7% of its own width beyond the content column. */
+    --drop-right: calc(max(var(--gutter), (100vw - var(--content-max)) / 2) - var(--drop-w) * 0.07);
+    --rise: 8px;
+    --tail: 6px;
+    --cap-len: 24px;
+  }
+}
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--content-max));
+  margin-inline: auto;
+}
+
+.site-header {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 5;
+  height: var(--header-h);
+}
+
+/* Air zone. The floor rule is built in: it grows with its content, so the fill line
+ * is never closer than 32px to the last air element (and never higher than --air-h). */
+.air-zone {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  min-height: var(--air-h);
+  flex-direction: column;
+  padding-top: calc(var(--header-h) + var(--air-top-gap));
+  padding-bottom: 32px;
+}
+
+@media (min-width: 1024px) {
+  .air-zone {
+    justify-content: flex-end;
+    padding-bottom: 38px;
+  }
+}
+
+main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.liquid {
+  position: relative;
+  flex: 1;
+  padding-top: 24px;
+  padding-bottom: 40px;
+}
+
+@media (min-width: 768px) {
+  .liquid {
+    padding-top: 36px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .liquid {
+    padding-top: 40px;
+  }
+}
+
+.liquid-content {
+  position: relative;
+  z-index: 4;
+}
+
+.site-footer {
+  position: relative;
+  z-index: 4;
+  background: var(--color-coral);
   color: var(--color-ink);
 }
 
-/* Crisp raised card for the signup: solid, clean edge, warm tinted shadow. */
-@utility surface-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  box-shadow: var(--shadow-soft);
+/* Mobile: the label sits beside the submerged part of the droplet; the input starts below it. */
+.signup-lead {
+  min-height: calc(var(--drop-h) * (1 - var(--drop-line)) - 12px);
 }
 
-/*
- * Light and water effects around the official droplet. The droplet image is
- * never altered: effects are overlays clipped to its own silhouette (the mask
- * is set inline via --droplet) plus a reflection and ripples beneath it.
- */
-.droplet-fx {
-  -webkit-mask-image: var(--droplet);
-  mask-image: var(--droplet);
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
+@media (min-width: 768px) {
+  .signup-lead {
+    min-height: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * The liquid. Layers, bottom to top:
+ *   coral field + capillary rise (z1) -> official droplet (z2) -> liquid veil (z3) -> content (z4)
+ * ------------------------------------------------------------------------- */
+.fill-field {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: -4vw;
+  bottom: -80px;
+  left: -4vw;
+  background: var(--color-coral);
+  /* The swell pivots under the droplet: still at the droplet, a few px at the far edges. */
+  transform-origin: calc(100% - 4vw - var(--drop-right) - var(--drop-w) / 2) 0;
+}
+
+/* Meniscus: the one "wet" detail. 2px air line, 4px below the surface, 45%. */
+.fill-field::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: var(--color-air);
+  opacity: 0.45;
+}
+
+.cap,
+.fill-veil {
+  transform-origin: 50% 0;
+}
+
+.cap {
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--rise) * -1);
+  width: var(--cap-len);
+  height: calc(var(--rise) + var(--tail));
+}
+
+.cap-l {
+  right: calc(var(--drop-right) + var(--drop-w) * (1 - var(--edge-l)) - 3px);
+}
+
+.cap-r {
+  right: calc(var(--drop-right) + var(--drop-w) * (1 - var(--edge-r)) - var(--cap-len) + 3px);
+}
+
+.drop-box {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: var(--drop-right);
+  width: var(--drop-w);
+  height: var(--drop-h);
+  transform: translateY(-58%);
   pointer-events: none;
 }
 
-/* Reflection in clear water: flipped, fading out, rippled (filter defined in HeroVisual). */
-.droplet-reflection {
-  transform: scaleY(-1);
-  -webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 0.36), transparent 18%);
-  mask-image: linear-gradient(to top, rgb(0 0 0 / 0.36), transparent 18%);
-  filter: url(#glow-water) blur(0.6px);
+.drop-img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-/*
- * Motion principles (docs/DESIGN_SYSTEM.md): slow liquid drift, soft ripple,
- * refracted light, slow reveal. Everything is wrapped in no-preference so
- * reduced-motion visitors get the finished, static composition.
- */
+/* Halftone halo: air only, clipped at the fill line by construction, lattice locked to the droplet. */
+.halo {
+  position: absolute;
+  top: calc(var(--drop-w) * -0.56);
+  left: calc(var(--drop-w) * -0.5258);
+  display: block;
+  width: calc(var(--drop-w) * 2.0517);
+  height: auto;
+  max-width: none;
+}
+
+.halo-ring {
+  opacity: 0;
+  transition: opacity 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Liquid veil: official coral at 65% (spec range 55-65%), below the surface only. The droplet is seen through the liquid. */
+.fill-veil {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: var(--drop-right);
+  width: var(--drop-w);
+  height: calc(var(--drop-h) * (1 - var(--drop-line)) + 2px);
+  background: var(--color-coral);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* Level: a restrained rise after a signup (set from the form's success state). */
+.fill-motion {
+  translate: 0 var(--level, 0px);
+  transition: translate 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html[data-signup="success"] {
+  --level: -9px;
+}
+
+html[data-signup="success"] .halo-ring {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+ * Type
+ * ------------------------------------------------------------------------- */
+.headline {
+  font-size: 3.375rem; /* 54px */
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+:lang(en) .headline {
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+}
+
+@media (min-width: 768px) {
+  .headline {
+    font-size: 5.5rem; /* 88px */
+  }
+}
+
+@media (min-width: 1024px) {
+  .headline {
+    font-size: clamp(6rem, 8.9vw, 9rem); /* ~128px at 1440, cap 144px */
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion. Four motions only: the pour, the swell, the signup response, the halo's arrival.
+ * Everything lives inside no-preference, so reduced-motion visitors get the final state.
+ * ------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes glow-reveal {
+  @keyframes fill-pour {
+    0% {
+      translate: 0 105svh;
+    }
+    76% {
+      translate: 0 -8px;
+    }
+    100% {
+      translate: 0 0;
+    }
+  }
+
+  @keyframes fill-swell {
+    from {
+      transform: rotate(-0.14deg);
+    }
+    to {
+      transform: rotate(0.14deg);
+    }
+  }
+
+  @keyframes halo-in {
     from {
       opacity: 0;
-      transform: translateY(14px);
     }
     to {
       opacity: 1;
-      transform: none;
-    }
-  }
-  @keyframes glow-drift {
-    0%,
-    100% {
-      transform: translate3d(0, 0, 0) scale(1);
-    }
-    50% {
-      transform: translate3d(3%, -3%, 0) scale(1.06);
-    }
-  }
-  /* The droplet rests on the air above clear water. */
-  @keyframes glow-float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-9px);
-    }
-  }
-  @keyframes glow-float-reverse {
-    0%,
-    100% {
-      transform: scaleY(-1) translateY(0);
-    }
-    50% {
-      transform: scaleY(-1) translateY(-9px);
-    }
-  }
-  /* Rings spread across the water beneath it, slowly. */
-  @keyframes glow-ripple {
-    0% {
-      transform: scale(0.35);
-      opacity: 0;
-    }
-    20% {
-      opacity: 0.7;
-    }
-    100% {
-      transform: scale(1.25);
-      opacity: 0;
-    }
-  }
-  /* Refracted light passes through the liquid body. */
-  @keyframes glow-refract {
-    0%,
-    25% {
-      background-position: 100% 0;
-    }
-    80%,
-    100% {
-      background-position: 0% 0;
-    }
-  }
-  /* Light pooling at the base drifts side to side. */
-  @keyframes glow-caustic {
-    0%,
-    100% {
-      transform: translateX(-6%);
-      opacity: 0.55;
-    }
-    50% {
-      transform: translateX(6%);
-      opacity: 0.95;
     }
   }
 
-  .motion-reveal {
-    animation: glow-reveal 0.9s var(--ease-flow) both;
-    animation-delay: calc(var(--reveal-order, 0) * 110ms + 60ms);
+  .fill-motion {
+    animation:
+      fill-pour 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s backwards,
+      fill-swell 3.5s ease-in-out 1.4s infinite alternate;
   }
-  .motion-drift {
-    animation: glow-drift 24s ease-in-out infinite;
-  }
-  .motion-float {
-    animation: glow-float 10s ease-in-out infinite;
-  }
-  .droplet-reflection {
-    animation: glow-float-reverse 10s ease-in-out infinite;
-  }
-  .motion-ripple {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: glow-ripple 9s var(--ease-flow) infinite;
-  }
-  .droplet-refract {
-    background-size: 300% 100%;
-    animation: glow-refract 11s ease-in-out infinite;
-  }
-  .droplet-caustic {
-    animation: glow-caustic 12s ease-in-out infinite;
+
+  .halo-in {
+    animation: halo-in 400ms ease-out 1.15s backwards;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .droplet-reflection {
-    filter: blur(0.6px);
-  }
   html {
     scroll-behavior: auto;
+  }
+
+  .fill-motion,
+  .halo-ring {
+    transition: none;
   }
 }

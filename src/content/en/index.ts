@@ -16,7 +16,8 @@ export const en: Dictionary = {
   home: {
     eyebrow: "COMING SOON",
     headline: "Hydrate Your Glow.",
-    headlineAccent: "Glow",
+    headlineAccent: "Glow.",
+    headlineLines: { wide: ["Hydrate", "Your Glow."], narrow: ["Hydrate", "Your", "Glow."] },
     support: {
       moments: ["A busy day.", "A pickleball match.", "A workout.", "An afternoon in the heat."],
       body: "Your body loses more water and minerals than you notice. GlowJ helps you replenish in a more natural way — so you can stay fresh and radiant.",
@@ -25,7 +26,6 @@ export const en: Dictionary = {
   },
   signup: {
     label: "Your Zalo number",
-    placeholder: "Your Zalo number",
     submitLabel: "Tell me when GlowJ launches",
     // DRAFT, not approved.
     consentNotice: "By submitting your Zalo number, you agree to be contacted by GlowJ about the launch.",

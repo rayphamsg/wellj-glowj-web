@@ -18,7 +18,8 @@ export const vi: Dictionary = {
   home: {
     eyebrow: "SẮP RA MẮT",
     headline: "Bù lại để luôn tươi.",
-    headlineAccent: "luôn tươi",
+    headlineAccent: "tươi.",
+    headlineLines: { wide: ["Bù lại để", "luôn tươi."], narrow: ["Bù lại", "để luôn", "tươi."] },
     support: {
       moments: ["Một ngày bận rộn.", "Một trận pickleball.", "Một buổi tập.", "Một chiều ngoài nắng."],
       body: "Cơ thể mất nước và khoáng chất nhiều hơn bạn nghĩ. GlowJ giúp bạn bù lại theo một cách tự nhiên hơn — để luôn tươi khỏe, rạng ngời.",
@@ -27,7 +28,6 @@ export const vi: Dictionary = {
   },
   signup: {
     label: "Số Zalo của bạn",
-    placeholder: "Số Zalo của bạn",
     submitLabel: "Nhắn tôi khi GlowJ ra mắt",
     // DRAFT, not approved.
     consentNotice: "Bằng việc gửi số Zalo, bạn đồng ý để GlowJ liên hệ với bạn về lần ra mắt.",

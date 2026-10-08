@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Montserrat, Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Be_Vietnam_Pro } from "next/font/google";
 import { notFound } from "next/navigation";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { RefractionField } from "@/components/visual/RefractionField";
 import { indexable } from "@/config/seo";
 import { site } from "@/content/site";
 import { getDictionary } from "@/lib/i18n/dictionary";
@@ -11,22 +8,12 @@ import { isLocale, LOCALES, OG_LOCALE } from "@/lib/i18n/locales";
 import { absoluteUrl, languageAlternates, localePath } from "@/lib/seo";
 import "../globals.css";
 
-// Heavy geometric sans for headlines (the voice of the label type); clean sans for body and UI;
-// serif italic only for the single headline accent. All cover Vietnamese.
-const display = Montserrat({
+// One family for everything: Be Vietnam Pro, drawn for Vietnamese (stacked diacritics stay clean).
+// Contrast comes from weight and scale: Black (900) headline, Bold/SemiBold labels, Medium body.
+// Backup if ever needed: Plus Jakarta Sans ExtraBold (docs/DESIGN_SYSTEM.md section 8).
+const body = Be_Vietnam_Pro({
   subsets: ["latin", "latin-ext", "vietnamese"],
-  variable: "--font-display-face",
-  display: "swap",
-});
-const accent = Fraunces({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  style: ["italic"],
-  axes: ["opsz"],
-  variable: "--font-accent-face",
-  display: "swap",
-});
-const body = Plus_Jakarta_Sans({
-  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["400", "500", "600", "700", "900"],
   variable: "--font-body-face",
   display: "swap",
 });
@@ -66,22 +53,15 @@ export async function generateMetadata({ params }: Pick<LayoutProps, "params">):
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#fffaf4", // paper (label cream)
+  themeColor: "#f7faf9", // air (mineral white)
 };
 
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   return (
-    <html lang={locale} className={`${display.variable} ${accent.variable} ${body.variable}`}>
-      <body className="relative isolate flex min-h-dvh flex-col overflow-x-clip">
-        <RefractionField />
-        <Header locale={locale} />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <Footer />
-      </body>
+    <html lang={locale} className={body.variable}>
+      <body>{children}</body>
     </html>
   );
 }

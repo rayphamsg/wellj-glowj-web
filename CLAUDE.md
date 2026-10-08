@@ -3,7 +3,7 @@
 Official site for **GlowJ by WellJ** at `https://drinkglowj.com`. GlowJ is a **separate brand from IronJ**; only the technical foundation is shared in pattern. The maintainer is a non-technical founder: explain changes in plain language and keep them small.
 
 ## Current status
-**Stage 1 art direction approved: "The Fill Line" — not yet implemented.** [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) is the complete, implementation-ready spec (colours, composition, typography, motion, form, guardrails, checklist) and overrides the current Coming Soon code, which still reflects a superseded direction. Approved copy is unchanged. Still open: consent/microcopy wording, favicon/OG, hosting, production secrets. See [docs/BRAND_PENDING.md](docs/BRAND_PENDING.md).
+**Stage 1 "The Fill Line" is implemented.** [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) is the source of truth (colours, composition, typography, motion, form, guardrails, file map, deviations). Its guardrails are enforced by tests in `src/brand.test.ts`. Approved copy is unchanged. Still open: consent/microcopy wording, favicon/OG, hosting, production secrets. See [docs/BRAND_PENDING.md](docs/BRAND_PENDING.md).
 
 ## Operating rules
 - Work on a branch and never push to `main` directly. Do not open a PR unless asked.
@@ -27,6 +27,6 @@ Official site for **GlowJ by WellJ** at `https://drinkglowj.com`. GlowJ is a **s
 
 ## Docs
 - [docs/SITE_ARCHITECTURE.md](docs/SITE_ARCHITECTURE.md): structure, i18n, SEO, lead capture, deployment
-- [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md): approved "Fill Line" art direction for Stage 1 (implementation-ready spec)
+- [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md): the implemented "Fill Line" art direction for Stage 1 (spec, file map, deviations)
 - [docs/STAGES.md](docs/STAGES.md): stages and feature flags
 - [docs/BRAND_PENDING.md](docs/BRAND_PENDING.md): what is still awaiting approval
