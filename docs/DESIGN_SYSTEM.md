@@ -1,7 +1,7 @@
 # GlowJ Design System — Stage 1 Coming Soon: "THE FILL LINE"
 
 **Status: APPROVED and IMPLEMENTED (Stage 1).**
-This document is the single source of truth for the Stage 1 Coming Soon page. It replaces every earlier Coming Soon direction (soft ambient light, floating droplet with reflection, glass card, serif-italic accent, bottle hero), none of which remains in the code. See **§22 Implementation notes** for the file map and the (few) deliberate deviations.
+This document is the single source of truth for the Stage 1 Coming Soon page. It replaces every earlier Coming Soon direction (soft ambient light, floating droplet with reflection, glass card, bottle hero), none of which remains in the code. See **§22 Implementation notes** for the file map and the (few) deliberate deviations.
 
 **Design principle (use it to judge every decision):**
 > If it couldn't be screen-printed in mineral white, coral and black and still read as a drink filling up, it doesn't belong on the page.
@@ -130,11 +130,11 @@ How this prevents the "pink soft drink" read: air always sits on top and holds t
 
 - **Primary:** **Be Vietnam Pro** (Vietnamese-first; correct stacked diacritics ể ổ ờ ạ; weights 100–900; Google Fonts). One family; contrast from weight and scale only.
 - **Backup:** Plus Jakarta Sans ExtraBold (already integrated; Vietnamese subset; slightly rounder/less dense).
-- **Dropped:** serif and italic entirely (no Fraunces accent), Montserrat display.
-- **Headline personality:** Black (900), upright, dense, set tight, hard full stops. No italic, no serif, no outline/3D type.
+- **Dropped:** Montserrat display; Black (900) weight.
+- **Headline personality: beauty × hydration.** The sentence is Be Vietnam Pro **Bold (700)**, upright and modern; the coral accent word ("tươi." / "Glow.") is **Fraunces SemiBold Italic (600)**, an elegant high-contrast serif with full Vietnamese support (horns and stacked marks verified). The beauty feeling comes from the contrast between the bold modern sans and the serif accent. This is the **only** serif/italic on the site (approved founder exception, pinned by a test). Accent set at 1.08em for optical size match, +0.04em optical gap before it, +0.04em right padding for the italic overhang. Not sport, spa, skincare luxury, handwritten or wedding/editorial: no script, no other serif, no italic elsewhere, no outline/3D type.
 - **Headline scale:** mobile 390: 52–58px · tablet 820: 84–92px · desktop 1440: 124–132px · cap 144px; fluid between.
-- **Line-height:** VI **0.98** (stacked marks and below-dots must never collide; verify at max size) · EN **0.90**.
-- **Tracking:** VI **−0.03em** · EN **−0.045em**.
+- **Line-height:** VI **1.04** (stacked marks and below-dots must never collide; verify at max size) · EN **0.98**.
+- **Tracking:** VI **−0.02em** · EN **−0.03em** (sans); accent −0.005em.
 - **Manual line breaks** (bold = official coral, including the full stop; everything else ink):
 
 | | Desktop | Tablet / mobile |
@@ -181,7 +181,7 @@ Banned: shadows, blur, glass, inner glows, noise grain, soft-UI rounded surfaces
 
 ## 12. Active energy
 
-Only through: Black-weight type at poster scale with tight tracking and hard full stops; the four moments as stacked staccato beats against the long body line; asymmetry (text left, droplet right breaking the frame, unbalanced negative space); the pour's single decisive overshoot; a physical CTA press (2px downward, no colour fade). **No athlete photography in Stage 1.**
+Only through: Bold type at poster scale with hard full stops and a single coral serif-italic accent; the four moments as stacked staccato beats against the long body line; asymmetry (text left, droplet right breaking the frame, unbalanced negative space); the pour's single decisive overshoot; a physical CTA press (2px downward, no colour fade). **No athlete photography in Stage 1.**
 
 ---
 
@@ -241,7 +241,7 @@ Only through: Black-weight type at poster scale with tight tracking and hard ful
 5. Corner radius is 0 everywhere. The only curves belong to the official logo and droplet.
 6. No fade-up text, staggered reveals, parallax or cursor-follow effects.
 7. Every motion must change the liquid's level or surface; otherwise delete it.
-8. No serif/italic "premium" accent. Premium comes from scale, spacing, restraint.
+8. No serif/italic anywhere except the single sanctioned headline accent word (§8). Never a second serif, never italic body or labels, never script.
 9. Asymmetry is mandatory. If the layout mirrors cleanly, it is wrong.
 10. No over-softened composition: hard edges, committed scale, real negative space.
 
@@ -254,7 +254,7 @@ Only through: Black-weight type at poster scale with tight tracking and hard ful
 | Ink on air `#F7FAF9` | 18.0:1 | All air-zone text |
 | Ink on coral | **5.1:1** | All coral-zone text, including 13px consent (AA) |
 | Air on ink | 18.0:1 | CTA text, success bar |
-| Coral on air | 3.53:1 | **Only** the headline accent word (≥ 52px, Black) |
+| Coral on air | 3.53:1 | **Only** the headline accent word (≥ 54px, Fraunces SemiBold Italic) |
 | Air on coral | 3.53:1 | **Never for text.** Meniscus line only |
 
 (With the fallback air `#FFFDFC`: ink 18.7:1, coral 3.66:1; same rules.)
@@ -315,7 +315,7 @@ Only through: Black-weight type at poster scale with tight tracking and hard ful
 | Halo generator (static output, committed) | `scripts/generate-halo.mjs` -> `public/images/glowj-halo.svg`, `glowj-halo-ring.svg` |
 | Guardrail tests | `src/brand.test.ts`, `src/content/content.test.ts` |
 
-**Guardrails are enforced by tests** (`npm test` fails if any of these reappear in `src/`): gradients, backdrop/glass, shadows, blur, italic, serif or the retired fonts, rounded corners, warm off-whites, white, any colour other than the three approved, any bottle/packaging file or reference, any alteration of the droplet image.
+**Guardrails are enforced by tests** (`npm test` fails if any of these reappear in `src/`): gradients, backdrop/glass, shadows, blur, italic or serif outside the single sanctioned headline accent (pinned to `layout.tsx`, `globals.css` `.headline-accent` and `Headline.tsx`), retired fonts, rounded corners, warm off-whites, white, any colour other than the three approved, any bottle/packaging file or reference, any alteration of the droplet image.
 
 **Geometry as built.** The stage is plain flow layout: `.air-zone` (min-height 52.5 / 56 / 58 svh, content-driven, so the floor rule holds by construction) above `.liquid`. The fill line is the top edge of `.liquid`; the droplet box is anchored to it and shifted up by 58% of its own height. Verified (VI and EN): coral share of the first viewport is 48% at 390x844 and 46-48% at 360x740, 44% on tablet, 42% at 1440x900 (shorter desktop windows get less, never more, because of the floor rule); the mobile CTA ends at ~666px; no horizontal overflow at any tested size.
 

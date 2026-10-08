@@ -20,7 +20,8 @@ function breakAfter(lines: string[]): Set<number> {
 }
 
 /**
- * The headline, set on manual line breaks: two lines from the desktop breakpoint,
+ * The headline: Be Vietnam Pro Bold, with the accent word in Fraunces SemiBold Italic, coral.
+ * Set on manual line breaks: two lines from the desktop breakpoint,
  * the narrow arrangement below it. One heading in the DOM; the breaks are <br>s
  * shown per breakpoint, so assistive technology reads a single sentence.
  */
@@ -33,7 +34,7 @@ export function Headline({ headline, accent, lines }: HeadlineProps) {
     <h1 className="headline">
       {words.map((word, i) => {
         const isLast = i === words.length - 1;
-        const w = word === accent ? <span className="text-coral">{word}</span> : word;
+        const w = word === accent ? <span className="headline-accent text-coral">{word}</span> : word;
         let separator: React.ReactNode = null;
         if (!isLast) {
           if (wide.has(i) && narrow.has(i)) separator = <br />;

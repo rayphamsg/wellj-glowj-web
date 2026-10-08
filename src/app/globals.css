@@ -13,6 +13,7 @@
 
 @theme inline {
   --font-sans: var(--font-body-face), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-accent: var(--font-accent-face), Georgia, "Times New Roman", serif;
 }
 
 html {
@@ -293,17 +294,31 @@ html[data-signup="success"] .halo-ring {
 /* ---------------------------------------------------------------------------
  * Type
  * ------------------------------------------------------------------------- */
+/* Headline: beauty x hydration. Bold modern sans for the sentence, one elegant serif italic
+ * accent word in coral. Same size and line breaks as before; a little more air between lines
+ * and letters so the bold sans stops reading as blocky. */
 .headline {
   font-size: 3.375rem; /* 54px */
-  font-weight: 900;
-  line-height: 0.98;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
   white-space: nowrap;
 }
 
 :lang(en) .headline {
-  line-height: 0.9;
-  letter-spacing: -0.045em;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+/* The single sanctioned serif/italic on the site (docs/DESIGN_SYSTEM.md section 8). */
+.headline-accent {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.08em; /* optical match: the serif italic sits smaller than the sans at equal size */
+  letter-spacing: -0.005em;
+  padding-right: 0.04em; /* italic overhang */
+  margin-left: 0.04em; /* optical gap after the upright word */
 }
 
 @media (min-width: 768px) {
