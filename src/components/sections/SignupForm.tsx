@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { submitLead } from "@/lib/lead-capture/actions";
 import type { SignupState } from "@/lib/lead-capture/process";
@@ -48,6 +48,10 @@ export function SignupForm({
   errorMessages,
 }: SignupFormProps) {
   const [state, action, pending] = useActionState(submitLead, initial);
+  // Controlled on purpose: React 19 resets the form's uncontrolled fields after every action, which
+  // would empty the field on an error and force the visitor to retype. The value is only dropped
+  // when the success bar replaces the strip.
+  const [contact, setContact] = useState("");
   const isEmail = channel === "email";
   const isPhone = channel === "zalo";
   const inputId = `contact-${placement}`;
@@ -83,11 +87,13 @@ export function SignupForm({
               name="contact"
               type={isEmail ? "email" : isPhone ? "tel" : "text"}
               inputMode={isEmail ? "email" : isPhone ? "tel" : undefined}
-              autoComplete={isEmail ? "email" : isPhone ? "tel" : "off"}
+              autoComplete={isEmail ? "email" : isPhone ? "tel-national" : "off"}
+              value={contact}
+              onChange={(event) => setContact(event.target.value)}
               required
               aria-describedby={error ? `${noticeId} ${errorId}` : noticeId}
               aria-invalid={error && state.status === "error" && state.reason === "invalid" ? true : undefined}
-              className="min-h-14 w-full min-w-0 border-0 border-b-[3px] border-transparent bg-air px-5 text-lg font-medium text-ink focus-visible:outline-offset-[-3px] aria-[invalid=true]:border-ink lg:flex-1"
+              className="min-h-14 w-full min-w-0 border-0 border-b-[3px] border-transparent bg-air px-5 text-lg font-medium text-ink caret-ink focus-visible:outline-offset-[-3px] aria-[invalid=true]:border-ink lg:flex-1"
             />
             <Button type="submit" disabled={pending} className="w-full lg:w-auto">
               {submitLabel}
