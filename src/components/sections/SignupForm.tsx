@@ -101,7 +101,7 @@ export function SignupForm({
 
       {/* One persistent live region: it announces the success bar or the error message. */}
       <div role="status" aria-live="polite">
-        {success && <p className="bg-ink px-5 py-4 text-[17px] font-semibold text-air">{successMessage}</p>}
+        {success && <p className="signup-success bg-ink px-5 py-4 text-[17px] font-semibold text-air">{successMessage}</p>}
         {error && (
           <p id={errorId} className="mt-3 text-[15px] font-semibold">
             <span aria-hidden="true">! </span>

@@ -34,6 +34,17 @@ function withoutSanctionedAccent(file: string, text: string): string {
   return text;
 }
 
+/**
+ * The light layers (docs/DESIGN_SYSTEM.md section 11) are the one place gradients are allowed: soft-edged flat
+ * colour in the brand's own air and coral. Their gradient declarations are removed before the guardrails scan
+ * (everything else in those rules is still scanned) and pinned by their own test below.
+ */
+const LIGHT_SELECTORS = [".warm", ".fill-light-band", ".drop-light-band", ".headline-accent"];
+const GRADIENT_DECLARATION = /(?:background-image|background):\s*(?:linear|radial)-gradient\((?:[^()]|\((?:[^()]|\([^()]*\))*\))*\);/g;
+function withoutSanctionedLight(file: string, text: string): string {
+  return file.endsWith("globals.css") ? text.replace(GRADIENT_DECLARATION, "") : text;
+}
+
 describe("brand isolation (Stage 1)", () => {
   it("serves no bottle or packaging file on any route", () => {
     const served = walk(join(root, "public")).map((f) => f.toLowerCase());
@@ -84,7 +95,7 @@ describe('"The Fill Line" guardrails (docs/DESIGN_SYSTEM.md sections 16-17)', ()
 
   for (const [pattern, name] of banned) {
     it(`uses no ${name}`, () => {
-      for (const file of sources) assert.ok(!pattern.test(withoutSanctionedAccent(file, code(file))), `${name} found in ${file}`);
+      for (const file of sources) assert.ok(!pattern.test(withoutSanctionedLight(file, withoutSanctionedAccent(file, code(file)))), `${name} found in ${file}`);
     });
   }
 
@@ -93,6 +104,30 @@ describe('"The Fill Line" guardrails (docs/DESIGN_SYSTEM.md sections 16-17)', ()
     assert.deepEqual(users.sort(), ["src/app/[locale]/layout.tsx", "src/app/globals.css", "src/components/fill/Headline.tsx"]);
     assert.match(read("src/app/[locale]/layout.tsx"), /Fraunces\(\{[\s\S]*?weight: \["500"\][\s\S]*?style: \["italic"\]/);
     assert.match(read("src/components/fill/Headline.tsx"), /word === accent \? \(\s*<span className=\{cx\("headline-accent text-coral"/);
+  });
+
+  it("allows gradients only in the named light layers, and only in air and coral", () => {
+    const css = code(join(root, "src/app/globals.css"));
+    let found = 0;
+    for (const [, selector, body] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!/gradient\(/.test(body)) continue;
+      found++;
+      assert.ok(LIGHT_SELECTORS.some((s) => selector.trim().endsWith(s)), `gradient in unsanctioned rule: ${selector.trim()}`);
+      for (const m of body.matchAll(GRADIENT_DECLARATION)) {
+        const colours = m[0].replace(/background(?:-image)?:|(?:linear|radial)-gradient|color-mix|in srgb|\d+(?:\.\d+)?(?:%|deg)|ellipse|\bat\b|transparent|var\(--color-(?:air|coral)\)|[\s,();0-9.-]/g, "");
+        assert.equal(colours, "", `gradient uses something other than air, coral or transparent: ${m[0]}`);
+      }
+    }
+    assert.equal(found, 4, "expected the four light layers (warm, liquid light, droplet light, accent highlight)");
+    assert.ok(!/gradient\(/.test(code(join(root, "src/components/fill/FillLine.tsx"))), "no inline gradients in components");
+  });
+
+  it("keeps every light layer motion-only or in the air: no blur, shadow or loop", () => {
+    const css = code(join(root, "src/app/globals.css"));
+    for (const name of ["light-sweep", "drop-sweep", "accent-light"]) {
+      const use = css.match(new RegExp(`animation:[^;]*${name}[^;]*;`))?.[0] ?? "";
+      assert.ok(use.length > 0 && !/infinite/.test(use), `${name} must exist and play once`);
+    }
   });
 
   it("uses exactly the three approved colours", () => {

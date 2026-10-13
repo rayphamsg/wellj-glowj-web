@@ -42,7 +42,7 @@ The screen is a container being filled. One hard, flat, horizontal **fill line**
 - **Never use** warm cream, beige, ivory, bone, parchment, sand, or warm "Claude/Anthropic-style" off-white for the air.
 - **Removed from Stage 1:** plum (black carries the premium anchor), `glow`, `blush`, `champagne`, `clear`/water tint, any pink or lighter coral tint.
 - **No hydration tint.** Hydration is carried by the fill line, not by colour.
-- **No gradients.** The only translucency is the functional liquid veil (§6).
+- **No gradients, except the four light layers in §11b.** The only other translucency is the functional liquid veil (§6).
 
 ---
 
@@ -100,7 +100,7 @@ How this prevents the "pink soft drink" read: air always sits on top and holds t
 - **Meniscus:** one **2px air-coloured highlight line, 4px below the edge, at 45% opacity**. This is the only "wet" detail on the page.
 - **Capillary rise:** where the surface meets the droplet, the coral edge curves **up 6–8px (desktop) / 4px (mobile)** over ~24px on each side, like water against a surface. This is what makes it read as liquid, not a section divider.
 - **At rest:** perfectly horizontal.
-- **Motion allowance:** idle swell **≤ 3px** (built as a 2px vertical breathing of the whole surface, 7s period). **No tilt or rotation:** it made the edge and the 2px highlight stair-step, so the line stays perfectly straight.
+- **Motion allowance:** none at rest. The surface moves only during the pour and the signup response (§13); the earlier 2px idle swell was removed because it was too subtle to add anything. **No tilt or rotation:** it made the edge and the 2px highlight stair-step, so the line stays perfectly straight.
 - **Must NOT look like:** a wave illustration, ocean, sine squiggle, ripple rings, gooey blob edge, gradient horizon, glossy jelly, drop shadow, or a generic website section divider.
 
 ---
@@ -176,10 +176,23 @@ Banned: shadows, blur, glass, inner glows, noise grain, soft-UI rounded surfaces
 
 ## 11. Glow signal
 
-- The halftone halo appears **only after** the pour completes, and only in the air above the surface: hydrate, then radiate.
-- A successful signup adds **one** halo ring (restrained): radiance grows after replenishment.
+- The halftone halo appears **only after** the pour completes (from 1.1s), and only in the air above the surface: hydrate, then radiate. It is revealed outward from the droplet's centre, inner rings first (600ms); no dot moves or changes size.
+- A successful signup adds **one** halo ring (restrained), revealed outward the same way after the level has started to rise: radiance grows after replenishment.
 - "tươi." / "Glow." are the only coloured words, sitting just above the surface.
-- No blur, light gradients, sparkles or shimmer. Glow is printed, not lit.
+- No blur, sparkles, shimmer, glossy highlights or glow blobs. Glow is printed first (the halftone halo); the light layers in §11b only pass over it, once.
+
+### 11b. Light layers (approved material refinement)
+
+Added after the motion pass to give the page luminous depth without changing layout, colour tokens or concept. These are the **only** gradients on the site; each is flat air or coral at low opacity with a soft edge, uses no blur or shadow, and is pinned by `src/brand.test.ts`.
+
+| Layer | What it does | Limits |
+|---|---|---|
+| Radiance (`.warm`) | Coral at 7% fading to nothing, centred on the droplet, in the air only; revealed with the halo | Static. Reads as radiance, not as a cream or beige background (the page background token is unchanged) |
+| Liquid light (`.fill-light`) | One broad band of air (peak 12% net) sweeps left to right through the coral during the load | 1.3s from 0.7s, plays once, never loops |
+| Droplet light (`.drop-light`) | One narrow pass of air confined to the droplet's own silhouette (its alpha is the mask), through the veil below the line | 900ms from 1.15s, peak about 20% net, once. The droplet image itself is never altered |
+| Accent highlight (`.headline-accent`) | One narrow lighter-coral band crosses the letters of "tươi." / "Glow." | 420ms from 1.15s, once, no scale or bounce |
+
+The halo itself was refined in the generator: inner dots are a little stronger (radius 6.2 vs the official 5.3) and thin out faster toward the outer edge (exponent 2.6). Same fixed lattice, nothing random.
 
 ## 12. Active energy
 
@@ -187,17 +200,20 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 
 ---
 
-## 13. Motion (four motions maximum, nothing else)
+## 13. Motion (one brand moment in three beats, plus the signup response)
 
-| Motion | Spec | Limits |
+| Beat | Spec | Limits |
 |---|---|---|
-| Initial fill | Coral rises from the bottom edge to the line; halo then fades in over 400ms | ≤ 1.1s, one overshoot ≤ 8px, settles once |
-| Idle surface | The whole surface breathes up and down, edge always straight | 2px, 7s period, vertical only, paused when the tab is hidden |
+| 1. Initial fill | Coral starts below the screen and rises fast (ease-out), overshoots **10px once** (at 70% of the move) and settles | 0.1s to 1.1s, one overshoot of 10px, settles once. Reads as filling up, never bounce or jelly |
+| 2. Headline accent | "tươi." / "Glow." arrives 200ms after the headline is already visible: opacity plus a rise of 0.05em (at most 8px) | 520ms, ease-out, no scale, no bounce. The sans headline itself never animates |
+| 3. Halo | After the liquid settles (from 1.1s) the halftone halo is revealed as a disc growing outward from the droplet's centre, with opacity | 580ms, inner rings first. Deterministic: no dot moves or changes size |
+| Light (see §11b) | Liquid sweep 0.7s to 2.0s; droplet pass and accent highlight from 1.15s | Each plays once; reduced motion shows none of them |
+| Signup response | Success bar appears (280ms: opacity plus 8px rise), the liquid level rises **12px** (800ms), and the signup ring is revealed outward (800ms, starting 200ms later) | Restrained: once, no celebration effects |
 | Scroll response (**optional**) | **Omitted.** A tilt cannot render cleanly (see §5), so there is no scroll tilt. | n/a |
-| Signup response | Level rises, halo adds one ring | **Restrained:** level +8–10px max, one ring, once, ~900ms. No celebration effects. |
 
-- **Reduced motion:** final state rendered statically (level line, halo visible, no motion); signup changes the level without animation.
-- **Never animated:** the droplet, the logo, the headline (no fade-up reveals), individual halo dots, the background. No loops except the idle swell.
+- **No idle motion.** Nothing moves once the sequence has ended; the page does not rely on a loop to feel alive.
+- **Reduced motion:** the final state appears immediately: no fill movement, no sequential reveals; the signup changes level, ring and bar without animation.
+- **Never animated:** the droplet, the logo, the sans headline, individual halo dots, the background.
 
 ---
 
@@ -225,7 +241,7 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 ## 16. Anti-soda guardrails
 
 1. Coral ≤ 45% of the first viewport on desktop/tablet, 46–49% on mobile (never > 50% unless layout integrity requires it). Air always on top.
-2. Coral is only `#EF4650`, flat. No tints, no pink, no pastel coral, no gradients.
+2. Coral is only `#EF4650`, flat. No tints, no pink, no pastel coral, no gradients (except the light layers in §11b, which are air or coral at low opacity over the flat fields).
 3. No fizz vocabulary: no bubbles, sparkles, ice, splash, straws, glasses, condensation, fruit (including guava imagery).
 4. Text on coral is **ink only**. Never white/air body text on coral.
 5. No rounded, bubbly, script, 3D or outline type. No pill buttons.
@@ -236,13 +252,13 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 
 ## 17. Anti-AI guardrails
 
-1. No pastel/ambient gradients, no glow blobs. The background is two flat fields.
+1. No pastel/ambient gradients, no glow blobs. The background is two flat fields; the §11b light layers only pass over them.
 2. No cards, glassmorphism, blur or soft drop shadows anywhere.
 3. No floating/bobbing object, no reflection under the droplet, no ripple rings.
 4. No left/right split hero, no centred hero object. Composition is top/bottom with an off-axis crop.
 5. Corner radius is 0 everywhere. The only curves belong to the official logo and droplet.
-6. No fade-up text, staggered reveals, parallax or cursor-follow effects.
-7. Every motion must change the liquid's level or surface; otherwise delete it.
+6. No fade-up text (other than the single accent arrival in §13), staggered reveals, parallax or cursor-follow effects.
+7. Every motion must change the liquid's level or surface, reveal the halo, or deliver the accent word as specified in §13; otherwise delete it.
 8. No serif/italic anywhere except the single sanctioned headline accent word (§8). Never a second serif, never italic body or labels, never script.
 9. Asymmetry is mandatory. If the layout mirrors cleanly, it is wrong.
 10. No over-softened composition: hard edges, committed scale, real negative space.
@@ -272,8 +288,8 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 
 ## 19. Implementation complexity
 
-- **Pure CSS:** grid/layout, colours, type, header, form strip, coral field, liquid veil (clipped layer), pour animation, reduced-motion fallbacks, content-driven floor for the line.
-- **SVG:** surface edge with meniscus highlight and idle swell (one wide path translated via CSS); the two capillary-rise pieces attached to the droplet's container so they move with it; the halftone halo generated once on the server as a static SVG scaled with the droplet so its pitch stays locked.
+- **Pure CSS:** grid/layout, colours, type, header, form strip, coral field, liquid veil (clipped layer), pour animation, halo and accent reveals, reduced-motion fallbacks, content-driven floor for the line.
+- **SVG:** surface edge with meniscus highlight; the two capillary-rise pieces attached to the droplet's container so they move with it; the halftone halo generated once on the server as a static SVG scaled with the droplet so its pitch stays locked.
 - **Client JS (small, isolated):** the signup-success signal that raises the level and adds the halo ring (a CSS variable or class set from the existing form's success state).
 - **Do NOT build:** WebGL/canvas water, interactive dot fields, device-motion "shake", parallax, cursor effects, Lottie/video, time-of-day theming, scroll-jacking, preloaders, droplet displacement/refraction.
 
@@ -317,14 +333,14 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 | Halo generator (static output, committed) | `scripts/generate-halo.mjs` -> `public/images/glowj-halo.svg`, `glowj-halo-ring.svg` |
 | Guardrail tests | `src/brand.test.ts`, `src/content/content.test.ts` |
 
-**Guardrails are enforced by tests** (`npm test` fails if any of these reappear in `src/`): gradients, backdrop/glass, shadows, blur, italic or serif outside the single sanctioned headline accent (pinned to `layout.tsx`, `globals.css` `.headline-accent` and `Headline.tsx`), retired fonts, rounded corners, warm off-whites, white, any colour other than the three approved, any bottle/packaging file or reference, any alteration of the droplet image.
+**Guardrails are enforced by tests** (`npm test` fails if any of these reappear in `src/`): gradients (other than the four named light layers in §11b, which may use only air, coral and transparent), backdrop/glass, shadows, blur, italic or serif outside the single sanctioned headline accent (pinned to `layout.tsx`, `globals.css` `.headline-accent` and `Headline.tsx`), retired fonts, rounded corners, warm off-whites, white, any colour other than the three approved, any bottle/packaging file or reference, any alteration of the droplet image.
 
 **Geometry as built.** The stage is plain flow layout: `.air-zone` (min-height 52.5 / 56 / 58 svh, content-driven, so the floor rule holds by construction) above `.liquid`. The fill line is the top edge of `.liquid`; the droplet box is anchored to it and shifted up by 58% of its own height. Verified (VI and EN): coral share of the first viewport is 48% at 390x844 and 46-48% at 360x740, 44% on tablet, 42% at 1440x900 (shorter desktop windows get less, never more, because of the floor rule); the mobile CTA ends at ~666px; no horizontal overflow at any tested size.
 
 **Deliberate deviations from this spec**
 
 1. **Scroll tilt omitted** (it was optional). No scroll listener or client motion code exists.
-2. **Idle swell is a 2px vertical breathing, not a travelling wave or a tilt:** the coral field, capillary rise and veil move together by 2px (7s period, within the 3px limit). An earlier +-0.14 degree tilt was removed because it made the surface edge and its 2px highlight stair-step; a pure vertical move keeps both perfectly straight (verified: 0 edge steps across the swell).
+2. **No idle swell.** The 2px surface breathing that shipped first was removed in the motion-hierarchy pass: it was too subtle to add value, and idle motion should not carry the page. (An earlier tilt had already been removed because it made the surface edge and its 2px highlight stair-step.)
 3. **Droplet placement on desktop** follows the "right edge 7% beyond the content column" rule; its centre lands at about 78% of the viewport width at 1440 (the spec also said ~74%; the two statements disagree, and the edge rule keeps the headline clear).
 4. **Halo coverage:** the 12% limit is read as printed dot coverage, not region area. The halo keeps the 0.75 x droplet-height radius but its dots shrink with a squared falloff so it is felt more than read, and it is cut off 0.25 droplet-widths left of the droplet so neither it nor the signup ring ever reaches the text column.
 5. **Veil at 65%** (top of the 55-65% range) so the submerged silhouette nearly disappears.
@@ -332,7 +348,7 @@ Only through: Bold type at poster scale with hard full stops and a single coral 
 7. **Form strip is stacked (input over CTA) below 1024px**, including tablet, because 58% of a tablet is too narrow for a side-by-side strip; from 1024px it is `[input | CTA]`.
 8. **Content shape:** `headlineAccent` is now the last word including its full stop ("tuoi." / "Glow."), `headlineLines` carries the manual breaks, and the unused `placeholder` key was removed. The approved copy itself is unchanged.
 9. **Signup response** is driven by a `data-signup` attribute that the form's success state sets on `<html>` (a one-line effect); CSS does the rest.
-10. **"Paused when the tab is hidden"** relies on the browser pausing off-screen CSS animation; no JavaScript is used.
+10. **Motion is CSS only.** The halo reveal uses `clip-path: circle()` centred on the droplet (50% 92% of the halo image); no JavaScript runs for the load sequence.
 11. **Mobile droplet crop is 12%** (spec said 15-20%) so the screen edge never cuts through the right node's ring. Tablet stays at 10% (already clear by ~25px).
 12. **Mobile label** is bottom-aligned in the space beside the droplet, so it stays ~8px above its input; the input and CTA did not move (CTA bottom still ~666px at 390x844).
 13. **Accent spacing:** the extra air before "tuoi." / "Glow." is carried by the space in front of it, not by the accent itself, so the accent is flush (within 1px) with the lines above when it starts a line on narrow screens. Desktop spacing is unchanged to the pixel.

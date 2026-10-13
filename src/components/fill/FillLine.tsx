@@ -25,13 +25,24 @@ export function FillLine() {
       </svg>
 
       <div aria-hidden="true" className="drop-box">
+        {/* Radiance: a very faint local coral tint around the droplet, revealed together with the halo */}
+        <div className="warm halo-in" />
         {/* Print halo in the air above the surface; the signup ring is revealed after a successful signup */}
         <Image src="/images/glowj-halo.svg" alt="" width={2052} height={1290} unoptimized className="halo halo-in" />
         <Image src="/images/glowj-halo-ring.svg" alt="" width={2052} height={1290} unoptimized className="halo halo-ring" />
         <Image src="/images/glowj-droplet.webp" alt="" width={1000} height={1259} priority unoptimized className="drop-img" />
+        {/* One light pass through the droplet's own silhouette (a separate overlay; the image is untouched) */}
+        <div className="drop-light">
+          <div className="drop-light-band" />
+        </div>
       </div>
 
       <div aria-hidden="true" className="fill-veil fill-motion" />
+
+      {/* One broad, low-contrast light sweep through the liquid during the load. Plays once. */}
+      <div aria-hidden="true" className="fill-light fill-motion">
+        <div className="fill-light-band" />
+      </div>
     </>
   );
 }

@@ -4,7 +4,7 @@
 //
 // Print logic, not particles: dots sit on the official droplet's own staggered
 // lattice (same pitch, same phase), are all official coral, and shrink with
-// distance from the droplet. Nothing is random. Units: droplet width = 1000.
+// distance from the droplet (strong near the droplet, thinning quickly outward). Nothing is random. Units: droplet width = 1000.
 //
 // Run: node scripts/generate-halo.mjs   (output is committed; the build never runs this)
 import { writeFileSync } from "node:fs";
@@ -16,7 +16,9 @@ const ROW = 20.05; // official droplet halftone: row spacing (staggered, half-pi
 const ORIGIN = [519.6, 814.0]; // a real dot of the official droplet (lattice phase)
 const R0 = 5.3; // official dot radius
 const CENTER = [500, 0.37 * H]; // the droplet's dry upper part
-const D0 = 470; // dots keep full size out to here (about the droplet's own radius)
+const R_PEAK = 6.2; // inner dots, a little stronger than the official dot (5.3)
+const D0 = 430; // dots keep full size out to here (a little inside the droplet's own radius)
+const FADE = 2.6; // falloff exponent: the dots thin out faster toward the outer edge
 const RMAX = 0.75 * H; // halo radius (spec: 0.75 x droplet height)
 const RING_R = RMAX + 2 * PITCH; // the signup ring sits just outside the halo
 const MIN_X = -250; // the halo never reaches into the text column: nothing further than 0.25 droplet-widths left of the droplet
@@ -70,7 +72,7 @@ for (let j = -rows - 20; j <= rows + 40; j++) {
     if (d > RING_R || x < MIN_X || inside(OUTLINE, x, y, 14)) continue;
     if (d <= RMAX) {
       const t = Math.min(1, Math.max(0, (d - D0) / (RMAX - D0)));
-      const r = R0 * Math.pow(1 - t, 2);
+      const r = R_PEAK * Math.pow(1 - t, FADE);
       if (r < 1.0) continue;
       const q = Math.round(r / 0.4) * 0.4;
       if (!halo.has(q)) halo.set(q, []);
