@@ -23,14 +23,22 @@ export const en: Dictionary = {
       body: "Your body loses more water and minerals than you notice. GlowJ helps you replenish in a more natural way — so you can stay fresh and radiant.",
     },
     category: "Natural hydration for active women.",
+    // Optional Zalo step after a successful signup (structure from the working IronJ flow). English is a working equivalent of the Vietnamese brief.
+    zalo: {
+      title: "Connect Zalo",
+      optional: "Optional",
+      open: "Open Zalo",
+      scanHint: "Follow GlowJ on Zalo for launch news and first offers.",
+      qrAlt: "QR code to open GlowJ on Zalo",
+    },
   },
   signup: {
     label: "Your Zalo number",
     submitLabel: "Tell me when GlowJ launches",
     // DRAFT, not approved.
     consentNotice: "By submitting your Zalo number, you agree to be contacted by GlowJ about the launch.",
-    // DRAFT, not approved.
-    successMessage: "Thank you. GlowJ will message you when it launches.",
+    // Confirmation from the approved after-submit flow (shown in capitals).
+    successMessage: "You’re on the list.",
     errorMessages: {
       // DRAFT, not approved.
       invalid: "That Zalo number doesn't look right. Please check it and try again.",

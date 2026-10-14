@@ -4,7 +4,9 @@ import { Headline } from "@/components/fill/Headline";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { SignupForm } from "@/components/sections/SignupForm";
+import { ZaloContinuation } from "@/components/sections/ZaloContinuation";
 import { isEnabled } from "@/config/features";
+import { site } from "@/content/site";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { isLocale } from "@/lib/i18n/locales";
 
@@ -17,6 +19,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const { home, signup } = getDictionary(locale);
+  // The optional Zalo step needs the real Official Account link AND its QR. Until both are set in
+  // src/content/site.ts nothing about Zalo is rendered: no placeholder, no disabled button, no note.
+  const { zalo, zaloQr } = site.social;
+  const zaloStep = zalo && zaloQr ? <ZaloContinuation copy={home.zalo} href={zalo} qrSrc={zaloQr} /> : undefined;
 
   return (
     <div className="stage">
@@ -49,7 +55,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
           <div className="liquid-content wrap">
             <div className="md:max-w-[58%] lg:max-w-[600px]">
-              {isEnabled("waitlist") && <SignupForm locale={locale} placement="hero" {...signup} />}
+              {isEnabled("waitlist") && (
+                <SignupForm
+                  locale={locale}
+                  placement="hero"
+                  {...signup}
+                  successSlot={zaloStep}
+                />
+              )}
 
               <p className="mt-10 text-[19px] font-semibold leading-[1.3] lg:text-[22px]">
                 {home.support.moments.map((moment) => (

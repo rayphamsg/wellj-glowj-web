@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"src/**/*.test.ts\"",
-    "test:e2e": "node scripts/e2e-signup-input.mjs"
+    "test:e2e": "node scripts/e2e-signup-input.mjs && node scripts/e2e-zalo-flow.mjs"
   },
   "dependencies": {
     "next": "16.3.8",

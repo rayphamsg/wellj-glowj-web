@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { stage } from "@/config/stage";
 import { site } from "@/content/site";
@@ -22,6 +22,8 @@ type SignupFormProps = {
     invalid: string;
     unavailable: string;
   };
+  /** Shown only after Netlify accepted the submission, below the confirmation (the optional Zalo step). */
+  successSlot?: ReactNode;
 };
 
 type FormState = { status: "idle" } | { status: "pending" } | { status: "success" } | { status: "error"; reason: "invalid" | "unavailable" };
@@ -48,6 +50,7 @@ export function SignupForm({
   consentNotice,
   successMessage,
   errorMessages,
+  successSlot,
 }: SignupFormProps) {
   const [state, setState] = useState<FormState>(initial);
   // Controlled: the typed number stays visible on every error and while pending, so the visitor can
@@ -87,51 +90,54 @@ export function SignupForm({
   }
 
   return (
-    <form onSubmit={onSubmit}>
-      {/* Netlify's honeypot (named in public/__forms.html): hidden from people, filled by bots. */}
-      <input type="text" name={HONEYPOT_FIELD} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+    <>
+      <form onSubmit={onSubmit}>
+        {/* Netlify's honeypot (named in public/__forms.html): hidden from people, filled by bots. */}
+        <input type="text" name={HONEYPOT_FIELD} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
 
-      {!success && (
-        <>
-          <div className="signup-lead">
-            <label htmlFor={inputId} className="block text-sm font-semibold">
-              {label}
-            </label>
-          </div>
-          <div className="mt-2 flex flex-col lg:flex-row">
-            <input
-              id={inputId}
-              name="contact"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel-national"
-              value={contact}
-              onChange={(event) => setContact(event.target.value)}
-              required
-              aria-describedby={error ? `${noticeId} ${errorId}` : noticeId}
-              aria-invalid={error && state.status === "error" && state.reason === "invalid" ? true : undefined}
-              className="min-h-14 w-full min-w-0 border-0 border-b-[3px] border-transparent bg-air px-5 text-lg font-medium text-ink caret-ink focus-visible:outline-offset-[-3px] aria-[invalid=true]:border-ink lg:flex-1"
-            />
-            <Button type="submit" disabled={pending} className="w-full lg:w-auto">
-              {submitLabel}
-            </Button>
-          </div>
-          <p id={noticeId} className="mt-3 max-w-[60ch] text-[13px] font-normal leading-[1.45]">
-            {consentNotice}
-          </p>
-        </>
-      )}
-
-      {/* One persistent live region: it announces the success bar or the error message. */}
-      <div role="status" aria-live="polite">
-        {success && <p className="signup-success bg-ink px-5 py-4 text-[17px] font-semibold text-air">{successMessage}</p>}
-        {error && (
-          <p id={errorId} className="mt-3 text-[15px] font-semibold">
-            <span aria-hidden="true">! </span>
-            {errorText}
-          </p>
+        {!success && (
+          <>
+            <div className="signup-lead">
+              <label htmlFor={inputId} className="block text-sm font-semibold">
+                {label}
+              </label>
+            </div>
+            <div className="mt-2 flex flex-col lg:flex-row">
+              <input
+                id={inputId}
+                name="contact"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel-national"
+                value={contact}
+                onChange={(event) => setContact(event.target.value)}
+                required
+                aria-describedby={error ? `${noticeId} ${errorId}` : noticeId}
+                aria-invalid={error && state.status === "error" && state.reason === "invalid" ? true : undefined}
+                className="min-h-14 w-full min-w-0 border-0 border-b-[3px] border-transparent bg-air px-5 text-lg font-medium text-ink caret-ink focus-visible:outline-offset-[-3px] aria-[invalid=true]:border-ink lg:flex-1"
+              />
+              <Button type="submit" disabled={pending} className="w-full lg:w-auto">
+                {submitLabel}
+              </Button>
+            </div>
+            <p id={noticeId} className="mt-3 max-w-[60ch] text-[13px] font-normal leading-[1.45]">
+              {consentNotice}
+            </p>
+          </>
         )}
-      </div>
-    </form>
+
+        {/* One persistent live region: it announces the success bar or the error message. */}
+        <div role="status" aria-live="polite">
+          {success && <p className="signup-success bg-ink px-5 py-4 text-[17px] font-semibold uppercase tracking-[0.04em] text-air">{successMessage}</p>}
+          {error && (
+            <p id={errorId} className="mt-3 text-[15px] font-semibold">
+              <span aria-hidden="true">! </span>
+              {errorText}
+            </p>
+          )}
+        </div>
+      </form>
+      {success && successSlot}
+    </>
   );
 }

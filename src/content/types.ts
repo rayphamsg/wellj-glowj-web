@@ -26,6 +26,17 @@ export type Dictionary = {
     };
     /** Category line shown with the signup. */
     category: string;
+    /** Optional Zalo step shown shortly after a successful signup. */
+    zalo: {
+      title: string;
+      optional: string;
+      /** Label of the "open Zalo" link. */
+      open: string;
+      /** Supporting line next to the desktop QR. */
+      scanHint: string;
+      /** Alt text for the QR image. */
+      qrAlt: string;
+    };
   };
   signup: SignupCopy;
 };

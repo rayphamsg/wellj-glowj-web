@@ -59,7 +59,7 @@ try {
   answer = 303;
   await input.fill("0912 345 678");
   await submit.click();
-  await page.waitForFunction(() => /Cảm ơn bạn/.test(document.querySelector("[role=status]")?.textContent ?? ""));
+  await page.waitForFunction(() => /Đã ghi nhận/.test(document.querySelector("[role=status]")?.textContent ?? ""));
   assert.equal(posts.length, 3);
   assert.equal(await page.locator("#contact-hero").count(), 0, "the strip is replaced by the success bar");
   assert.equal(await page.evaluate(() => document.documentElement.getAttribute("data-signup")), "success");

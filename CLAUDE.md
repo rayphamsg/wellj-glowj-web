@@ -5,7 +5,7 @@ Official site for **GlowJ by WellJ** at `https://drinkglowj.com`. GlowJ is a **s
 ## Current status
 **Stage 1 art direction is locked. Do not reopen or reinterpret the visual concept unless explicitly approved by Huy.**
 
-**Stage 1 "The Fill Line" is implemented.** [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) is the source of truth (colours, composition, typography, motion, form, guardrails, file map, deviations). Its guardrails are enforced by tests in `src/brand.test.ts`. Approved copy is unchanged. Still open: consent/microcopy wording, favicon/OG, hosting, production secrets. See [docs/BRAND_PENDING.md](docs/BRAND_PENDING.md).
+**Stage 1 "The Fill Line" is implemented.** [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) is the source of truth (colours, composition, typography, motion, form, guardrails, file map, deviations). Its guardrails are enforced by tests in `src/brand.test.ts`. Approved copy is unchanged. Still open: consent/microcopy wording, OG image, the real Zalo OA link + QR (`site.social`), hosting. See [docs/BRAND_PENDING.md](docs/BRAND_PENDING.md).
 
 ## Operating rules
 - **Stage 1 art direction is locked. Do not reopen or reinterpret the visual concept unless explicitly approved by Huy.** Fixes inside the approved design (bugs, polish that changes no layout, colour, type pairing, droplet, halo or copy) are fine; a new concept, direction, photography or rearranged composition is not.

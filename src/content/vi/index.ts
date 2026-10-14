@@ -25,14 +25,22 @@ export const vi: Dictionary = {
       body: "Cơ thể mất nước và khoáng chất nhiều hơn bạn nghĩ. GlowJ giúp bạn bù lại theo một cách tự nhiên hơn — để luôn tươi khỏe, rạng ngời.",
     },
     category: "GlowJ — Mix bù khoáng rạng ngời.",
+    // Optional Zalo step after a successful signup (structure from the working IronJ flow). Wording from the brief.
+    zalo: {
+      title: "Kết nối Zalo",
+      optional: "Tuỳ chọn",
+      open: "Mở Zalo",
+      scanHint: "Theo dõi GlowJ trên Zalo để nhận tin ra mắt và ưu đãi đầu tiên.",
+      qrAlt: "Mã QR mở Zalo của GlowJ",
+    },
   },
   signup: {
     label: "Số Zalo của bạn",
     submitLabel: "Nhắn tôi khi GlowJ ra mắt",
     // DRAFT, not approved.
     consentNotice: "Bằng việc gửi số Zalo, bạn đồng ý để GlowJ liên hệ với bạn về lần ra mắt.",
-    // DRAFT, not approved.
-    successMessage: "Cảm ơn bạn. GlowJ sẽ nhắn bạn khi ra mắt.",
+    // Confirmation from the approved after-submit flow (shown in capitals).
+    successMessage: "Đã ghi nhận.",
     errorMessages: {
       // DRAFT, not approved.
       invalid: "Số Zalo chưa đúng. Bạn kiểm tra lại giúp mình nhé.",
