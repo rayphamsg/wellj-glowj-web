@@ -3,19 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>glowj-coming-soon</title>
+    <title>GlowJ form blueprint</title>
   </head>
   <body>
     <!--
-      Netlify Forms blueprint. Netlify reads this file at deploy time to register the form (build-time
-      detection only); nobody sees it and nothing posts to it. The visible form
-      (src/components/sections/SignupForm.tsx) posts the same fields to "/" with fetch.
-      Keep the name, the honeypot and the field names identical to src/lib/lead-capture/netlify-forms.ts
-      (a test checks it).
+      Static "blueprint" for Netlify Forms. Netlify reads this file at build time to
+      detect the form and its fields. It is never shown: the real signup lives in
+      src/components/sections/SignupForm.tsx and posts to this file's URL with fetch().
+
+      Keep it in step with src/lib/lead-capture/netlify-forms.ts (a test checks this):
+      the form name, the honeypot, and one input per submitted field.
     -->
     <form name="glowj-coming-soon" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
       <input type="hidden" name="form-name" value="glowj-coming-soon" />
-      <input type="text" name="bot-field" />
+      <p hidden>
+        <label>Leave this empty: <input type="text" name="bot-field" /></label>
+      </p>
       <input type="text" name="phone_raw" />
       <input type="text" name="phone_normalized" />
       <input type="text" name="locale" />

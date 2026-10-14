@@ -4,7 +4,7 @@
 // Needs Playwright (not a project dependency): set PLAYWRIGHT_MODULE to its path, and CHROMIUM_PATH
 // if its browser is not installed in the default place.
 //
-// Netlify itself is not involved: the POST to "/" is answered by the test (500, a redirect, then 200), so
+// Netlify itself is not involved: the POST to /__forms.html is answered by the test (500, then Netlify's redirect to its success page), so
 // it checks the page's behaviour: the typed number stays on every error, retry works without retyping,
 // duplicate clicks are blocked while pending, the payload has the right fields, and success is shown
 // only after an accepted submission.
@@ -17,12 +17,10 @@ try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const posts = [];
   let answer = 500;
-  const isFormPost = (url) => new URL(url).pathname === "/";
-  await page.route(isFormPost, async (route) => {
-    if (route.request().method() !== "POST") return route.continue();
+  await page.route("**/__forms.html", async (route) => {
     posts.push(route.request().postData());
     await new Promise((r) => setTimeout(r, 400)); // long enough to see the pending state
-    if (answer === 307) return route.fulfill({ status: 307, headers: { location: "/vi" }, body: "" });
+    if (answer === 303) return route.fulfill({ status: 303, headers: { location: "/" }, body: "" });
     await route.fulfill({ status: answer, contentType: "text/html", body: "" });
   });
 
@@ -57,27 +55,19 @@ try {
   assert.equal(await input.inputValue(), "0912 345", "value must stay after an invalid number");
   assert.equal(await input.getAttribute("aria-invalid"), "true");
 
-  // 3b. A redirect (the app sends "/" to "/vi") is not an accepted submission.
-  answer = 307;
-  await input.fill("0912 345 678");
-  await submit.click();
-  await page.waitForFunction(() => /chưa gửi được/.test(document.querySelector("[role=status]")?.textContent ?? ""));
-  assert.equal(posts.length, 3, "the redirected attempt was sent once");
-  assert.equal(await input.inputValue(), "0912 345 678");
-  assert.equal(await page.evaluate(() => document.documentElement.getAttribute("data-signup")), null, "a redirect is never success");
-
-  // 4. Netlify accepted: now (and only now) the success bar replaces the strip.
-  answer = 200;
+  // 4. Netlify accepted (it answers with a redirect to its success page): now, and only now, the success bar replaces the strip.
+  answer = 303;
   await input.fill("0912 345 678");
   await submit.click();
   await page.waitForFunction(() => /Cảm ơn bạn/.test(document.querySelector("[role=status]")?.textContent ?? ""));
-  assert.equal(posts.length, 4);
+  assert.equal(posts.length, 3);
   assert.equal(await page.locator("#contact-hero").count(), 0, "the strip is replaced by the success bar");
   assert.equal(await page.evaluate(() => document.documentElement.getAttribute("data-signup")), "success");
   assert.ok(await status.isVisible());
 
   // 5. The payload Netlify receives.
-  const body = Object.fromEntries(new URLSearchParams(posts[3]));
+  assert.equal(posts[2], "form-name=glowj-coming-soon&phone_raw=0912+345+678&phone_normalized=%2B84912345678&locale=vi&source=drinkglowj.com&campaign=coming-soon&consent_at=" + new URLSearchParams(posts[2]).get("consent_at").replace(/:/g, "%3A") + "&consent_version=draft-0&bot-field=", "exact body");
+  const body = Object.fromEntries(new URLSearchParams(posts[2]));
   assert.equal(body["form-name"], "glowj-coming-soon");
   assert.equal(body.phone_raw, "0912 345 678");
   assert.equal(body.phone_normalized, "+84912345678");

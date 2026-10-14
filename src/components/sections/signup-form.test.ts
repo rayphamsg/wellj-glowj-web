@@ -32,14 +32,15 @@ describe("Zalo field keeps what the visitor typed", () => {
   });
 
   it("shows success only from the result of the Netlify submission, never optimistically", () => {
-    assert.match(form, /const result = await submitLead\(/);
-    assert.match(form, /setState\(result\);/);
-    assert.equal((form.match(/status: "success"/g) ?? []).length, 1, "only the type declaration may mention a success state");
+    assert.match(form, /const result = await postSubmission\(submission\);/);
+    assert.match(form, /setState\(result\.ok \? \{ status: "success" \} : \{ status: "error", reason: "unavailable" \}\);/);
+    assert.equal((form.match(/status: "success"/g) ?? []).length, 2, "only the type declaration and the post result may mention a success state");
   });
 
   it("posts to Netlify Forms with its honeypot and the stage, source and consent version", () => {
     assert.match(form, /<form onSubmit=\{onSubmit\}>/);
     assert.match(form, /name=\{HONEYPOT_FIELD\}/);
+    assert.match(form, /get\(HONEYPOT_FIELD\)/);
     assert.match(form, /campaign: stage/);
     assert.match(form, /consentVersion: CURRENT_CONSENT_VERSION/);
     assert.match(form, /new URL\(site\.url\)\.hostname/);

@@ -4,22 +4,22 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { CURRENT_CONSENT_VERSION } from "./consent.ts";
 import {
-  buildLeadFields,
-  encodeFields,
+  buildSubmission,
+  encodeSubmission,
   FORM_ENDPOINT,
-  FORM_FIELDS,
   FORM_NAME,
   HONEYPOT_FIELD,
-  submitLead,
-  type LeadContext,
+  postSubmission,
+  SUBMISSION_FIELDS,
+  type SubmissionContext,
 } from "./netlify-forms.ts";
 
 const root = new URL("../../..", import.meta.url).pathname;
 const NOW = new Date("2026-10-15T03:04:05.678Z");
-const ctx: LeadContext = { locale: "vi", source: "drinkglowj.com", campaign: "coming-soon", consentVersion: CURRENT_CONSENT_VERSION, now: () => NOW };
+const ctx: SubmissionContext = { locale: "vi", source: "drinkglowj.com", campaign: "coming-soon", consentVersion: CURRENT_CONSENT_VERSION, now: NOW };
 
 type Call = { url: string; init: RequestInit };
-function fakeFetch(respond: () => Response | Promise<Response>): { fetchImpl: typeof fetch; calls: Call[] } {
+function fakeFetch(respond: () => unknown | Promise<unknown>): { fetchImpl: typeof fetch; calls: Call[] } {
   const calls: Call[] = [];
   const fetchImpl = (async (input: RequestInfo | URL, init?: RequestInit) => {
     calls.push({ url: String(input), init: init ?? {} });
@@ -27,112 +27,110 @@ function fakeFetch(respond: () => Response | Promise<Response>): { fetchImpl: ty
   }) as typeof fetch;
   return { fetchImpl, calls };
 }
+const status = (code: number) => new Response("", { status: code });
+/** What fetch(..., { redirect: "manual" }) returns in a browser when the server answers with a redirect. */
+const opaqueRedirect = { ok: false, status: 0, type: "opaqueredirect" };
+const valid = () => {
+  const submission = buildSubmission("0912 345 678", ctx);
+  assert.ok(submission);
+  return submission;
+};
 
-describe("Netlify form payload", () => {
-  it("is named glowj-coming-soon and posts to the site root (the blueprint is only for detection)", () => {
+describe("Netlify form payload (same pattern as the working IronJ site)", () => {
+  it("is named glowj-coming-soon and posts to the blueprint file", () => {
     assert.equal(FORM_NAME, "glowj-coming-soon");
-    assert.equal(FORM_ENDPOINT, "/");
-    assert.equal(buildLeadFields("0912 345 678", ctx)?.["form-name"], "glowj-coming-soon");
+    assert.equal(FORM_ENDPOINT, "/__forms.html");
+    assert.equal(new URLSearchParams(encodeSubmission(valid())).get("form-name"), "glowj-coming-soon");
   });
 
   it("carries exactly the Stage 1 fields, and nothing that belongs to a CRM", () => {
-    const fields = buildLeadFields("0912 345 678", ctx);
-    assert.ok(fields);
-    assert.deepEqual(Object.keys(fields).sort(), ["form-name", HONEYPOT_FIELD, ...FORM_FIELDS].sort());
-    assert.deepEqual([...FORM_FIELDS], ["phone_raw", "phone_normalized", "locale", "source", "campaign", "consent_at", "consent_version"]);
-    for (const banned of ["signup_count", "first_seen_at", "last_seen_at", "status"]) assert.ok(!(banned in fields), banned);
+    const submission = valid();
+    assert.deepEqual(Object.keys(submission), ["phone_raw", "phone_normalized", "locale", "source", "campaign", "consent_at", "consent_version"]);
+    assert.deepEqual([...SUBMISSION_FIELDS], Object.keys(submission));
+    for (const banned of ["signup_count", "first_seen_at", "last_seen_at", "status"]) assert.ok(!(banned in submission), banned);
   });
 
   it("keeps the typed number and the normalized +84 number", () => {
-    const fields = buildLeadFields("  0912 345 678 ", ctx);
-    assert.equal(fields?.phone_raw, "0912 345 678");
-    assert.equal(fields?.phone_normalized, "+84912345678");
-    assert.equal(buildLeadFields("+84 912 345 678", ctx)?.phone_normalized, "+84912345678");
-    assert.equal(buildLeadFields("+84 912 345 678", ctx)?.phone_raw, "+84 912 345 678");
+    const typed = buildSubmission("  0912 345 678 ", ctx);
+    assert.equal(typed?.phone_raw, "0912 345 678");
+    assert.equal(typed?.phone_normalized, "+84912345678");
+    const international = buildSubmission("+84 912 345 678", ctx);
+    assert.equal(international?.phone_normalized, "+84912345678");
+    assert.equal(international?.phone_raw, "+84 912 345 678");
   });
 
   it("sets locale, source, campaign and the consent fields", () => {
-    const vi = buildLeadFields("0912345678", ctx);
+    const vi = buildSubmission("0912345678", ctx);
     assert.equal(vi?.locale, "vi");
     assert.equal(vi?.source, "drinkglowj.com");
     assert.equal(vi?.campaign, "coming-soon");
     assert.equal(vi?.consent_at, "2026-10-15T03:04:05.678Z");
     assert.equal(vi?.consent_version, CURRENT_CONSENT_VERSION);
-    assert.equal(buildLeadFields("0912345678", { ...ctx, locale: "en" })?.locale, "en");
+    assert.equal(buildSubmission("0912345678", { ...ctx, locale: "en" })?.locale, "en");
   });
 
-  it("includes Netlify's honeypot field, empty for people and passed through when a bot filled it", () => {
-    assert.equal(buildLeadFields("0912345678", ctx)?.[HONEYPOT_FIELD], "");
-    assert.equal(buildLeadFields("0912345678", ctx, "http://spam.example")?.[HONEYPOT_FIELD], "http://spam.example");
+  it("encodes form-name first, the seven fields in order, then the empty honeypot, byte for byte", () => {
     assert.equal(HONEYPOT_FIELD, "bot-field");
-  });
-
-  it("is a url-encoded body that round-trips", () => {
-    const fields = buildLeadFields("+84 912 345 678", ctx);
-    assert.ok(fields);
-    const parsed = Object.fromEntries(new URLSearchParams(encodeFields(fields)));
-    assert.deepEqual(parsed, fields);
+    const body = encodeSubmission(valid());
+    assert.equal(
+      body,
+      "form-name=glowj-coming-soon&phone_raw=0912+345+678&phone_normalized=%2B84912345678&locale=vi&source=drinkglowj.com&campaign=coming-soon" +
+        "&consent_at=2026-10-15T03%3A04%3A05.678Z&consent_version=draft-0&bot-field=",
+    );
+    assert.deepEqual([...new URLSearchParams(body).keys()], ["form-name", ...SUBMISSION_FIELDS, "bot-field"]);
   });
 });
 
 describe("phone validation before sending", () => {
-  it("rejects invalid numbers without any network call", async () => {
+  it("builds nothing for invalid numbers, so nothing can be sent", () => {
     for (const bad of ["", "12345", "0912 345", "0212345678", "+1 415 555 0100", "abc", "0912345678901234567890123456789012345"]) {
-      const { fetchImpl, calls } = fakeFetch(() => new Response("", { status: 200 }));
-      assert.equal(buildLeadFields(bad, ctx), null, bad);
-      assert.deepEqual(await submitLead(bad, ctx, "", fetchImpl), { status: "error", reason: "invalid" }, bad);
-      assert.equal(calls.length, 0, `no request for ${JSON.stringify(bad)}`);
+      assert.equal(buildSubmission(bad, ctx), null, JSON.stringify(bad));
     }
   });
 });
 
-describe("submitting to Netlify", () => {
-  it("posts the url-encoded form to / and reports success only on a direct 2xx", async () => {
-    const { fetchImpl, calls } = fakeFetch(() => new Response("", { status: 200 }));
-    assert.deepEqual(await submitLead("0912 345 678", ctx, "", fetchImpl), { status: "success" });
+describe("posting to Netlify", () => {
+  it("posts the urlencoded form to /__forms.html without following redirects", async () => {
+    const { fetchImpl, calls } = fakeFetch(() => status(200));
+    assert.deepEqual(await postSubmission(valid(), fetchImpl), { ok: true });
     assert.equal(calls.length, 1);
-    assert.equal(calls[0].url, "/");
+    assert.equal(calls[0].url, "/__forms.html");
     assert.equal(calls[0].init.method, "POST");
-    assert.equal(calls[0].init.redirect, "manual");
     assert.deepEqual(calls[0].init.headers, { "Content-Type": "application/x-www-form-urlencoded" });
-    const body = Object.fromEntries(new URLSearchParams(String(calls[0].init.body)));
-    assert.deepEqual(Object.keys(body).sort(), ["form-name", "bot-field", ...FORM_FIELDS].sort());
-    assert.equal(body["form-name"], "glowj-coming-soon");
-    assert.equal(body["bot-field"], "");
-    assert.equal(body.phone_normalized, "+84912345678");
+    assert.equal(calls[0].init.redirect, "manual");
+    assert.equal(calls[0].init.body, encodeSubmission(valid()));
   });
 
-  it("does not count a redirect as success (the app redirects / to /vi, which would swallow the POST)", async () => {
-    const redirected = { fetchImpl: (async () => ({ ok: false, status: 0, type: "opaqueredirect" })) as unknown as typeof fetch };
-    assert.deepEqual(await submitLead("0912 345 678", ctx, "", redirected.fetchImpl), { status: "error", reason: "unavailable" });
-    const seen = fakeFetch(() => new Response(null, { status: 307, headers: { location: "/vi" } }));
-    assert.deepEqual(await submitLead("0912 345 678", ctx, "", seen.fetchImpl), { status: "error", reason: "unavailable" });
+  it("counts Netlify's redirect to its success page as accepted", async () => {
+    const { fetchImpl } = fakeFetch(() => opaqueRedirect);
+    assert.deepEqual(await postSubmission(valid(), fetchImpl), { ok: true });
   });
 
-  it("never reports success when Netlify refuses or the network fails", async () => {
-    for (const status of [400, 404, 405, 429, 500, 503]) {
-      const { fetchImpl } = fakeFetch(() => new Response("", { status }));
-      assert.deepEqual(await submitLead("0912 345 678", ctx, "", fetchImpl), { status: "error", reason: "unavailable" }, String(status));
+  it("never reports success when the host refuses or the network fails", async () => {
+    for (const code of [400, 404, 405, 429, 500, 503]) {
+      const { fetchImpl } = fakeFetch(() => status(code));
+      assert.deepEqual(await postSubmission(valid(), fetchImpl), { ok: false, reason: "failed" }, String(code));
     }
     const throwing = fakeFetch(() => Promise.reject(new TypeError("Failed to fetch")));
-    assert.deepEqual(await submitLead("0912 345 678", ctx, "", throwing.fetchImpl), { status: "error", reason: "unavailable" });
+    assert.deepEqual(await postSubmission(valid(), throwing.fetchImpl), { ok: false, reason: "failed" });
   });
 
   it("can be retried straight away after a failure", async () => {
     let attempt = 0;
-    const { fetchImpl, calls } = fakeFetch(() => new Response("", { status: ++attempt === 1 ? 500 : 200 }));
-    assert.deepEqual(await submitLead("0912 345 678", ctx, "", fetchImpl), { status: "error", reason: "unavailable" });
-    assert.deepEqual(await submitLead("0912 345 678", ctx, "", fetchImpl), { status: "success" });
+    const { fetchImpl, calls } = fakeFetch(() => status(++attempt === 1 ? 500 : 200));
+    assert.deepEqual(await postSubmission(valid(), fetchImpl), { ok: false, reason: "failed" });
+    assert.deepEqual(await postSubmission(valid(), fetchImpl), { ok: true });
     assert.equal(calls.length, 2);
   });
 });
 
-describe("the static blueprint Netlify detects at deploy time", () => {
+describe("the static blueprint Netlify detects at build time", () => {
   const html = readFileSync(join(root, "public/__forms.html"), "utf8");
   const form = html.match(/<form[\s\S]*?<\/form>/)?.[0] ?? "";
 
   it("registers the form with Netlify under the same name, with the honeypot", () => {
     assert.match(form, /name="glowj-coming-soon"/);
+    assert.match(form, /method="POST"/);
     assert.match(form, /data-netlify="true"/);
     assert.match(form, /netlify-honeypot="bot-field"/);
     assert.match(form, /<input type="hidden" name="form-name" value="glowj-coming-soon"/);
@@ -141,7 +139,7 @@ describe("the static blueprint Netlify detects at deploy time", () => {
 
   it("declares exactly the fields the site posts, so none is dropped or unexpected", () => {
     const names = [...form.matchAll(/<input[^>]*\sname="([^"]+)"/g)].map((m) => m[1]);
-    assert.deepEqual(names.sort(), ["form-name", HONEYPOT_FIELD, ...FORM_FIELDS].sort());
+    assert.deepEqual(names.sort(), ["form-name", HONEYPOT_FIELD, ...SUBMISSION_FIELDS].sort());
   });
 
   it("stays out of search results", () => {

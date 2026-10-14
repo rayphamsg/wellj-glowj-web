@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { stage } from "@/config/stage";
 import { site } from "@/content/site";
 import { CURRENT_CONSENT_VERSION } from "@/lib/lead-capture/consent";
-import { HONEYPOT_FIELD, submitLead, type LeadLocale } from "@/lib/lead-capture/netlify-forms";
+import { HONEYPOT_FIELD, buildSubmission, postSubmission, type LeadLocale } from "@/lib/lead-capture/netlify-forms";
 
 type SignupFormProps = {
   /** Which language the visitor is using. Stored with the lead. */
@@ -69,10 +69,21 @@ export function SignupForm({
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending) return; // one submission at a time
-    const honeypot = String(new FormData(event.currentTarget).get(HONEYPOT_FIELD) ?? "");
+
+    // Honeypot: real visitors leave this hidden field empty. A bot that filled it sends nothing.
+    if (new FormData(event.currentTarget).get(HONEYPOT_FIELD)) {
+      setState({ status: "error", reason: "unavailable" });
+      return;
+    }
+    const submission = buildSubmission(contact, { locale, source, campaign: stage, consentVersion: CURRENT_CONSENT_VERSION });
+    if (!submission) {
+      setState({ status: "error", reason: "invalid" });
+      return;
+    }
+
     setState({ status: "pending" });
-    const result = await submitLead(contact, { locale, source, campaign: stage, consentVersion: CURRENT_CONSENT_VERSION }, honeypot);
-    setState(result);
+    const result = await postSubmission(submission);
+    setState(result.ok ? { status: "success" } : { status: "error", reason: "unavailable" });
   }
 
   return (
