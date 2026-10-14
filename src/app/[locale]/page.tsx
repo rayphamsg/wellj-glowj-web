@@ -49,7 +49,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
           <div className="liquid-content wrap">
             <div className="md:max-w-[58%] lg:max-w-[600px]">
-              {isEnabled("waitlist") && <SignupForm channel="zalo" locale={locale} placement="hero" {...signup} />}
+              {isEnabled("waitlist") && <SignupForm locale={locale} placement="hero" {...signup} />}
 
               <p className="mt-10 text-[19px] font-semibold leading-[1.3] lg:text-[22px]">
                 {home.support.moments.map((moment) => (

@@ -1,11 +1,13 @@
-// Browser check for the Zalo field: the number the visitor typed must stay visible after an
-// "invalid" or "unavailable" response, and the retry must work without retyping.
-//
-// Run against a deployment WITHOUT lead-capture secrets (a valid number then returns "unavailable"):
+// Browser check for the Zalo field and the Netlify Forms submission, against any running build:
 //   npm run build && npm start        # in one terminal
 //   BASE_URL=http://localhost:3000 npm run test:e2e
 // Needs Playwright (not a project dependency): set PLAYWRIGHT_MODULE to its path, and CHROMIUM_PATH
 // if its browser is not installed in the default place.
+//
+// Netlify itself is not involved: the POST to "/" is answered by the test (500, a redirect, then 200), so
+// it checks the page's behaviour: the typed number stays on every error, retry works without retyping,
+// duplicate clicks are blocked while pending, the payload has the right fields, and success is shown
+// only after an accepted submission.
 import assert from "node:assert/strict";
 
 const base = process.env.BASE_URL ?? "http://localhost:3000";
@@ -13,46 +15,80 @@ const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? "playwright")
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const posts = [];
+  let answer = 500;
+  const isFormPost = (url) => new URL(url).pathname === "/";
+  await page.route(isFormPost, async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    posts.push(route.request().postData());
+    await new Promise((r) => setTimeout(r, 400)); // long enough to see the pending state
+    if (answer === 307) return route.fulfill({ status: 307, headers: { location: "/vi" }, body: "" });
+    await route.fulfill({ status: answer, contentType: "text/html", body: "" });
+  });
+
   await page.goto(`${base}/vi`, { waitUntil: "networkidle" });
   const input = page.locator("#contact-hero");
   const submit = page.locator("button[type=submit]");
-  const message = (re) =>
-    page.waitForFunction((s) => new RegExp(s).test(document.querySelector("[role=status]")?.textContent ?? ""), re.source, { timeout: 15000 });
+  const status = page.locator("[role=status]");
 
-  // The pending phase can be shorter than a Playwright round trip, so watch for it inside the page.
-  await page.evaluate(() => {
-    const field = document.querySelector("#contact-hero");
-    const button = document.querySelector("button[type=submit]");
-    window.__pending = [];
-    new MutationObserver(() => {
-      if (button.disabled) window.__pending.push(field.value);
-    }).observe(button, { attributes: true, attributeFilter: ["disabled"] });
-  });
+  // 1. Pending: the number stays, the button is disabled, a second click sends nothing.
   await input.fill("0912 345 678");
   await submit.click();
-  await message(/chưa gửi được/);
-  const pending = await page.evaluate(() => window.__pending);
-  assert.ok(pending.length > 0, "submit must be disabled while pending");
-  assert.ok(pending.every((v) => v === "0912 345 678"), "value must stay visible while pending");
-  await message(/chưa gửi được/);
-  await page.waitForTimeout(300);
-  assert.equal(await input.inputValue(), "0912 345 678", "value must stay after provider unavailable");
+  await page.waitForFunction(() => document.querySelector("button[type=submit]").disabled);
+  assert.equal(await input.inputValue(), "0912 345 678", "value must stay while pending");
+  await submit.click({ force: true });
+  await page.waitForFunction(() => /chưa gửi được/.test(document.querySelector("[role=status]")?.textContent ?? ""));
+  assert.equal(posts.length, 1, "a second click while pending must not send a second submission");
 
-  await submit.click(); // immediate retry, nothing retyped
-  await message(/chưa gửi được/);
-  await page.waitForTimeout(300);
-  assert.equal(await input.inputValue(), "0912 345 678", "value must stay after a retry");
+  // 2. Netlify refused: honest error, number kept, immediate retry works.
+  assert.equal(await input.inputValue(), "0912 345 678", "value must stay after a failed submission");
+  assert.equal(await page.evaluate(() => document.documentElement.getAttribute("data-signup")), null, "no success signal on failure");
+  await submit.click();
+  await page.waitForFunction(() => document.querySelector("button[type=submit]").disabled);
+  await page.waitForFunction(() => !document.querySelector("button[type=submit]").disabled);
+  assert.equal(posts.length, 2, "retry without retyping");
+  assert.equal(await input.inputValue(), "0912 345 678");
 
+  // 3. Invalid number: error, number kept, nothing sent.
   await input.fill("0912 345");
   await submit.click();
-  await message(/chưa đúng/);
-  await page.waitForTimeout(300);
+  await page.waitForFunction(() => /chưa đúng/.test(document.querySelector("[role=status]")?.textContent ?? ""));
+  assert.equal(posts.length, 2, "an invalid number is never sent");
   assert.equal(await input.inputValue(), "0912 345", "value must stay after an invalid number");
   assert.equal(await input.getAttribute("aria-invalid"), "true");
 
-  const style = await input.evaluate((e) => ({ color: getComputedStyle(e).color, caret: getComputedStyle(e).caretColor, bg: getComputedStyle(e).backgroundColor }));
-  assert.deepEqual(style, { color: "rgb(11, 18, 18)", caret: "rgb(11, 18, 18)", bg: "rgb(247, 250, 249)" });
-  console.log("ok: the Zalo field keeps the typed number; ink text and caret on the air field");
+  // 3b. A redirect (the app sends "/" to "/vi") is not an accepted submission.
+  answer = 307;
+  await input.fill("0912 345 678");
+  await submit.click();
+  await page.waitForFunction(() => /chưa gửi được/.test(document.querySelector("[role=status]")?.textContent ?? ""));
+  assert.equal(posts.length, 3, "the redirected attempt was sent once");
+  assert.equal(await input.inputValue(), "0912 345 678");
+  assert.equal(await page.evaluate(() => document.documentElement.getAttribute("data-signup")), null, "a redirect is never success");
+
+  // 4. Netlify accepted: now (and only now) the success bar replaces the strip.
+  answer = 200;
+  await input.fill("0912 345 678");
+  await submit.click();
+  await page.waitForFunction(() => /Cảm ơn bạn/.test(document.querySelector("[role=status]")?.textContent ?? ""));
+  assert.equal(posts.length, 4);
+  assert.equal(await page.locator("#contact-hero").count(), 0, "the strip is replaced by the success bar");
+  assert.equal(await page.evaluate(() => document.documentElement.getAttribute("data-signup")), "success");
+  assert.ok(await status.isVisible());
+
+  // 5. The payload Netlify receives.
+  const body = Object.fromEntries(new URLSearchParams(posts[3]));
+  assert.equal(body["form-name"], "glowj-coming-soon");
+  assert.equal(body.phone_raw, "0912 345 678");
+  assert.equal(body.phone_normalized, "+84912345678");
+  assert.equal(body.locale, "vi");
+  assert.equal(body.source, "drinkglowj.com");
+  assert.equal(body.campaign, "coming-soon");
+  assert.equal(body.consent_version, "draft-0");
+  assert.match(body.consent_at, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+  assert.equal(body["bot-field"], "");
+  assert.deepEqual(Object.keys(body).sort(), ["bot-field", "campaign", "consent_at", "consent_version", "form-name", "locale", "phone_normalized", "phone_raw", "source"]);
+  console.log("ok: typed number kept on errors, duplicate clicks blocked, success only after Netlify accepts, payload correct");
 } finally {
   await browser.close();
 }

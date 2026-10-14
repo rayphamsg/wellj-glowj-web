@@ -1,7 +1,7 @@
 /**
  * Versions of the consent/privacy notice shown next to the signup button.
  *
- * The form posts the version of the notice it displayed; the server records
+ * The form posts the version of the notice it displayed; Netlify Forms stores
  * it with the lead (`consent_version`) next to `consent_at`, so each lead can
  * be traced to the exact wording that was on screen.
  *

@@ -14,11 +14,11 @@ The GlowJ direction is **approved for the Stage 1 Coming Soon design** (see [DES
 | Favicon / OG image | Not provided | — |
 | Contact / social links | `null` | `src/content/site.ts` |
 | Search indexing | OFF (`noindex`, robots `Disallow: /`, empty sitemap) | `src/config/seo.ts` |
-| Production secrets | Not connected | `.env.example` |
+| Lead inbox | Netlify Forms `glowj-coming-soon` (no secrets). Enable Form detection in Netlify and check a real submission | `docs/SITE_ARCHITECTURE.md` |
 
 ## Before go-live
 1. Approve final consent and microcopy wording; add a new consent version (never edit an existing one) and record it in `SITE_ARCHITECTURE.md`.
 2. Add favicon and OG image (derive from the official assets).
 3. Decide when the bottle and product photography are revealed (a later stage).
 4. Set `indexable = true` in `src/config/seo.ts`.
-5. Set production secrets in the chosen hosting provider (production only; non-production uses a test spreadsheet).
+5. In Netlify: enable Form detection, set up submission notifications (email), and confirm a real test submission appears under Forms.

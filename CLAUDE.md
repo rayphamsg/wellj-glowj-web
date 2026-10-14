@@ -22,7 +22,7 @@ Official site for **GlowJ by WellJ** at `https://drinkglowj.com`. GlowJ is a **s
 - Server Components by default; `"use client"` only when interactivity requires it.
 - Stage and features: `src/config/stage.ts`, `src/config/features.ts`. Indexing: `src/config/seo.ts` (off until approved go-live).
 - Bilingual routes `/vi` and `/en` (`[locale]` segment); `/` redirects temporarily to `/vi`. No i18n library.
-- Lead consent: `draft-0` is a placeholder. Nothing goes live on `drinkglowj.com` with a draft consent version or without production secrets being set deliberately.
+- Lead consent: `draft-0` is a placeholder. Lead capture is Netlify Forms (form `glowj-coming-soon`, blueprint `public/__forms.html`, client in `src/lib/lead-capture/netlify-forms.ts`); it needs no secrets. Nothing goes live on `drinkglowj.com` with a draft consent version, or before Form detection is enabled and a real submission has been checked in Netlify.
 - Claims review is a pre-publish gate: never publish unreviewed claims to production.
 
 ## Commands

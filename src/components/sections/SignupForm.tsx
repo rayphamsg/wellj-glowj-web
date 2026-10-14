@@ -1,15 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
-import { submitLead } from "@/lib/lead-capture/actions";
-import type { SignupState } from "@/lib/lead-capture/process";
+import { stage } from "@/config/stage";
+import { site } from "@/content/site";
 import { CURRENT_CONSENT_VERSION } from "@/lib/lead-capture/consent";
-import type { LeadChannel, LeadLocale } from "@/lib/lead-capture/types";
+import { HONEYPOT_FIELD, submitLead, type LeadLocale } from "@/lib/lead-capture/netlify-forms";
 
 type SignupFormProps = {
-  /** Which kind of contact this form collects. */
-  channel?: LeadChannel;
   /** Which language the visitor is using. Stored with the lead. */
   locale: LeadLocale;
   /** Where on the site this form sits, e.g. "hero". Only used to keep element ids unique. */
@@ -26,19 +24,23 @@ type SignupFormProps = {
   };
 };
 
-const initial: SignupState = { status: "idle" };
+type FormState = { status: "idle" } | { status: "pending" } | { status: "success" } | { status: "error"; reason: "invalid" | "unavailable" };
+
+const initial: FormState = { status: "idle" };
+
+// Set once: where the lead came from and which stage it was collected in.
+const source = new URL(site.url).hostname;
 
 /**
- * Provider-agnostic signup. It only talks to `submitLead`; which provider
- * receives the lead is decided in src/lib/lead-capture/adapters.ts.
+ * Stage 1 signup. The visitor's number is validated in the browser and posted to Netlify Forms
+ * (src/lib/lead-capture/netlify-forms.ts; the blueprint in public/__forms.html is for detection). Success is shown only
+ * after Netlify accepts the submission.
  *
  * Presentation (docs/DESIGN_SYSTEM.md section 14): a flat strip sitting in the liquid. Visible
  * label, no placeholder, square corners, ink CTA. On success the strip is replaced by an ink bar
  * and the page's fill level responds (set via the data-signup attribute; see globals.css).
- * The lead-capture behaviour is unchanged.
  */
 export function SignupForm({
-  channel = "zalo",
   locale,
   placement,
   label,
@@ -47,13 +49,11 @@ export function SignupForm({
   successMessage,
   errorMessages,
 }: SignupFormProps) {
-  const [state, action, pending] = useActionState(submitLead, initial);
-  // Controlled on purpose: React 19 resets the form's uncontrolled fields after every action, which
-  // would empty the field on an error and force the visitor to retype. The value is only dropped
-  // when the success bar replaces the strip.
+  const [state, setState] = useState<FormState>(initial);
+  // Controlled: the typed number stays visible on every error and while pending, so the visitor can
+  // retry at once. It is only dropped when the success bar replaces the strip.
   const [contact, setContact] = useState("");
-  const isEmail = channel === "email";
-  const isPhone = channel === "zalo";
+  const pending = state.status === "pending";
   const inputId = `contact-${placement}`;
   const noticeId = `consent-${placement}`;
   const errorId = `error-${placement}`;
@@ -66,13 +66,19 @@ export function SignupForm({
     if (success) document.documentElement.setAttribute("data-signup", "success");
   }, [success]);
 
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (pending) return; // one submission at a time
+    const honeypot = String(new FormData(event.currentTarget).get(HONEYPOT_FIELD) ?? "");
+    setState({ status: "pending" });
+    const result = await submitLead(contact, { locale, source, campaign: stage, consentVersion: CURRENT_CONSENT_VERSION }, honeypot);
+    setState(result);
+  }
+
   return (
-    <form action={action}>
-      <input type="hidden" name="channel" value={channel} />
-      <input type="hidden" name="locale" value={locale} />
-      <input type="hidden" name="consentVersion" value={CURRENT_CONSENT_VERSION} />
-      {/* Honeypot field; hidden from people, filled by bots. */}
-      <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+    <form onSubmit={onSubmit}>
+      {/* Netlify's honeypot (named in public/__forms.html): hidden from people, filled by bots. */}
+      <input type="text" name={HONEYPOT_FIELD} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
 
       {!success && (
         <>
@@ -85,9 +91,9 @@ export function SignupForm({
             <input
               id={inputId}
               name="contact"
-              type={isEmail ? "email" : isPhone ? "tel" : "text"}
-              inputMode={isEmail ? "email" : isPhone ? "tel" : undefined}
-              autoComplete={isEmail ? "email" : isPhone ? "tel-national" : "off"}
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel-national"
               value={contact}
               onChange={(event) => setContact(event.target.value)}
               required
